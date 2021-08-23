@@ -1,0 +1,33 @@
+{% extends 'mentor/layout.html' %}
+
+{% block content %}
+
+    <div class="container">
+        {%for j in '123'|make_list %}
+          <div class="row">
+              {% for i in '123'|make_list %}
+                <div class="col">
+                      <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <!--<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                            -->
+                            <p class="card-text">
+                                <ul>
+                                    <li><i class="bi bi-award"></i>컴퓨터공학과/15학번</li>
+                                    <li>남자</li>
+                                    <li>컴퓨터, 수학, 영어</li>
+                                </ul>
+                            </p>
+                            <!--
+                            <a href="#" class="card-link">Card link</a>
+                            <a href="#" class="card-link">Another link</a>
+                            -->
+                        </div>
+                      </div>
+                </div>
+              {% endfor %}
+          </div>
+        {% endfor %}
+    </div>
+{% endblock %}
