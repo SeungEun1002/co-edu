@@ -21,10 +21,14 @@
 
 	<link rel="stylesheet" href="{% static 'mentor/menu_lib/css/animate.css' %}">
 	<link rel="stylesheet" href="{% static 'mentor/menu_lib/css/style.css' %}">
+
+    <!--self css-->
+    <link rel="stylesheet" href="{% static 'mentor/css/style.css' %}">
     <!-- 경로 지우고 바꿨음 -->
 
-    {% block extra_css %}
-    {% endblock %}
+        {% block extra_css %}
+        {% endblock %}
+
 </head>
 <body>
     <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
@@ -41,9 +45,10 @@
         </nav>
     </aside> <!-- END COLORLIB-ASIDE -->
 
-    {% block content %}
-    {% endblock %}
-
+    <div class="left-nav-space">
+        {% block content %}
+        {% endblock %}
+    </div>
     <!-- JavaScript Bundle with Popper -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
