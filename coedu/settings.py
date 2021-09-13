@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'user',
     'mentor',
     'mentee',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

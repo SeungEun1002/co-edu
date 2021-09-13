@@ -7,7 +7,7 @@ class Subject(models.Model):
     name = models.CharField(max_length=50)
 
 class User(AbstractUser):
-    YEAR_CHOICES = [(r, r) for r in range(2000, datetime.date.today().year+1)]
+    YEAR_CHOICES = [(str(r), r) for r in range(2000, datetime.date.today().year+1)]
     GENDER_CHOICES = (
         ('man', '남'),
         ('wom', '여'),
@@ -27,3 +27,6 @@ class Mentor(models.Model):
     teaching_subject = models.TextField()
     introduction = models.TextField()
     service_hour = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
