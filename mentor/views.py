@@ -5,5 +5,3 @@ from django.http import HttpResponse
 def index(request):
     return render(request, 'mentor/layout.html')
 
-def mentor_list(request):
-    return render(request, 'mentor/mentor_list.html')

@@ -1,7 +1,9 @@
-.left-nav-space {
-    margin-left: 20%;
+/* navigation bar*/
+
+#colorlib-aside #colorlib-main-menu ul li.colorlib-active a {
+    color: #005500;
 }
 
-.card {
-    margin: 10px auto;
+#colorlib-aside #colorlib-main-menu ul li a:after {
+    background-color: #005500;
 }
