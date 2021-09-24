@@ -1,3 +1,7 @@
+/* BODY */
+body {
+    height: 100vh;
+}
 /* Navigation Bar */
 .left-nav-space {
     margin-left: 25%;
