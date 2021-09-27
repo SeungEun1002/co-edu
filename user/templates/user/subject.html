@@ -1,0 +1,12 @@
+{% extends 'user/layout.html' %}
+
+
+{% block content %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="제출하기">
+        </form>
+
+
+{% endblock %}
