@@ -1,0 +1,15 @@
+{% extends 'mentee/layout.html' %}
+
+
+{% block content %}
+
+    <div class="d-flex flex-column align-items-center">
+        <h2>멘토 가입</h2>
+        <form action="" method="post" class="d-flex flex-column">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="가입하기" class="btn btn-primary">
+        </form>
+    </div>
+
+{% endblock %}

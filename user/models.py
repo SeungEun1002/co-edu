@@ -6,6 +6,9 @@ class Subject(models.Model):
     code = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
     YEAR_CHOICES = [(str(r), r) for r in range(2000, datetime.date.today().year+1)]
     GENDER_CHOICES = (

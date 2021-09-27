@@ -17,6 +17,11 @@ body {
 
 }
 
+.site-title a, .site-title a:hover {
+    color: black;
+}
+
 .card {
     margin: 10px auto;
 }
+

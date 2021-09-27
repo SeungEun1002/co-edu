@@ -1,15 +1,13 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from .models import *
 from .forms import *
 
 def home(request):
+    logout(request)
     print(request.user)
     return render(request, 'user/home.html')
-
-def index(request):
-    return render(request, 'user/layout.html')
 
 def signin(request):
     if request.method =='POST':
@@ -19,7 +17,7 @@ def signin(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
-            return redirect('home')
+            return redirect('mentee:index')
 
     else:
         pass
@@ -30,7 +28,11 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('mentee:index')
     else:
         form=SignUpForm()
     return render(request, 'user/signup.html', {'form':form})

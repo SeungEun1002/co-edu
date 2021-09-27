@@ -35,7 +35,7 @@
 
     <aside id="colorlib-aside" role="complementary" class="js-fullheight">
         <nav id="colorlib-main-menu" role="navigation">
-            <h1 class="site-title">Co-edu</h1>
+            <h1 class="site-title"><a href={% url "mentee:index" %}>Co-edu</a></h1>
             <ul>
                 <li class="colorlib-active"><a href="#">멘토 찾기</a></li>
                 <li><a href="#">멘토링 신청내역</a></li>
@@ -43,13 +43,16 @@
                 <li><a href="#">내 일정</a></li>
                 <li><a href="#">내 정보</a></li>
             </ul>
-            <a href="#" class="btn btn-primary">멘토로 전환</a>
-            <a href="#" class="btn btn-primary">로그아웃</a>
-
+            {% if request.user.is_mentor %}
+                <a href={% url "mentor:index" %} class="btn btn-primary">멘토로 전환</a>
+            {% else %}
+                <a href={% url "mentee:mentor_singup" %} class="btn btn-primary">멘토로 가입</a>
+            {% endif %}
+            <a href={% url "home" %} class="btn btn-primary">로그아웃</a>
         </nav>
     </aside> <!-- END COLORLIB-ASIDE -->
 
-    <div class="left-nav-space">
+    <div class="left-nav-space py-5" >
         {% block content %}
         {% endblock %}
     </div>
