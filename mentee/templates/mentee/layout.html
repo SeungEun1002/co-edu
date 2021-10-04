@@ -46,7 +46,7 @@
             {% if request.user.is_mentor %}
                 <a href={% url "mentor:index" %} class="btn btn-primary">멘토로 전환</a>
             {% else %}
-                <a href={% url "mentee:mentor_singup" %} class="btn btn-primary">멘토로 가입</a>
+                <a href={% url "mentee:mentor_signup" %} class="btn btn-primary">멘토로 가입</a>
             {% endif %}
             <a href={% url "home" %} class="btn btn-primary">로그아웃</a>
         </nav>

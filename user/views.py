@@ -17,7 +17,12 @@ def signin(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
-            return redirect('mentee:index')
+
+            submit_btn = request.POST.get('submit_btn')
+            if submit_btn == '멘토로 로그인':
+                return redirect('mentor:index')
+            else:
+                return redirect('mentee:index')
 
     else:
         pass

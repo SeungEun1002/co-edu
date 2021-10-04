@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from user.models import *
 from .forms import *
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def index(request):
     return render(request, 'mentee/layout.html')
 
+@login_required
 def mentor_signup(request):
     if request.method == 'POST':
         form = MentorSignupForm(request.POST)
@@ -25,7 +28,7 @@ def mentor_signup(request):
         form = MentorSignupForm()
     return render(request, 'mentee/mentor_signup.html', {'form': form})
 
-
+@login_required
 def mentor_list(request):
     qs = Mentor.objects.all()[:4]   # TODO: Paging
     mentor_list = list()
