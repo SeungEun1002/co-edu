@@ -1,0 +1,82 @@
+{% extends 'mentee/layout.html' %}
+
+
+{% block content %}
+
+    <div class="container my-4 px-5">
+        <div>
+            <div class="row">
+                {% for ongoing_request in mentoring_waiting %}
+                <div class="col-md-4">
+                  <div class="card mb-4 box-shadow">
+                    <div class="card-body">
+                      <h5 class="card-title">{{ ongoing_request.mentor.user.name }}</h5>
+                      <p class="card-text">
+                        <ul style="list-style: none; padding-left: 5px;">
+                            <li>시간: {{ ongoing_request.mentoring_timetable.start_datetime }}부터 1시간</li>
+                            <li>멘토링 과목: {{ ongoing_request.mentoring_subject }} </li>
+                        </ul>
+                      </p>
+                      <div class="d-flex justify-content-between align-items-center">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                <div class="btn-group">
+                                    <input type="hidden" name="id" value="{{ ongoing_request.id }}">
+                                    <input type="submit" name="submit_btn" value="취소" class="btn btn-md btn-outline-dark">
+                                </div>
+                            </form>
+                        <small class="text-muted">{{ ongoing_request.created_datetime|timesince }} 전</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+`            </div>
+        </div>
+
+        <div>
+
+            <div class="row justify-content-between my-3">
+            <div class="col-2">
+                <select class="form-control so">
+                    <option value="recent" selected>최신순</option>
+                    <option value="recommend">추천순</option>
+                    <option value="popular">인기순</option>
+                </select>
+            </div>
+            <div class="col-4 input-group">
+                <input type="text" class="form-control kw" value="{{ kw|default_if_none:'' }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+            <tr class="text-center">
+                <th style="width:20%">상태</th>
+                <th style="width:50%">멘토 이름</th>
+                <th>멘토링 과목</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for time in mentoring_request %}
+            <tr class="text-center">
+                <td>
+                    {{ time.get_status_display }}
+                </td>
+                <td>
+                    {{ time.mentor.user.name }}
+                </td>
+                <td>
+                    {{ time.mentoring_subject }}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        </div>
+    </div>
+
+{% endblock %}

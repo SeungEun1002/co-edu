@@ -37,8 +37,8 @@
         <nav id="colorlib-main-menu" role="navigation">
             <h1 class="site-title"><a href={% url "mentee:index" %}>Co-edu</a></h1>
             <ul>
-                <li class="colorlib-active"><a href="#">멘토 찾기</a></li>
-                <li><a href="#">멘토링 신청내역</a></li>
+                <li class="colorlib-active"><a href={% url "mentee:mentor_list" %}>멘토 찾기</a></li>
+                <li><a href={% url "mentee:mentoring_application" %}>멘토링 신청내역</a></li>
                 <li><a href="#">멘토와의 대화</a></li>
                 <li><a href="#">내 일정</a></li>
                 <li><a href="#">내 정보</a></li>
