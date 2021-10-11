@@ -1,0 +1,62 @@
+{% extends 'mentor/layout.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/timetable.css'%}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+                <div class="timetable-img text-center">
+                    <img src="img/content/timetable.png" alt="">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr class="bg-light-gray">
+                                <th class="text-uppercase" style="width:16%">시간
+                                </th>
+                                <th class="text-uppercase" style="width:12%">월</th>
+                                <th class="text-uppercase" style="width:12%">화</th>
+                                <th class="text-uppercase" style="width:12%">수</th>
+                                <th class="text-uppercase" style="width:12%">목</th>
+                                <th class="text-uppercase" style="width:12%">금</th>
+                                <th class="text-uppercase" style="width:12%">토</th>
+                                <th class="text-uppercase" style="width:12%">일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr style="height: 30px">
+                                <td class="align-middle">{{ row.time_str }}</td>
+                                {% for col in row.columns %}
+                                    {% if col %}
+                                        <td onclick="tdClicked(this)" style="cursor: pointer; background-color:#D0F0C0" mentee_name="{{ col.mentee.name }}">
+                                            <div class="font-size15">{{ col.mentee.name }}</div>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        function tdClicked(obj) {
+            alert(obj.getAttribute('mentee_name'));
+        }
+    </script>
+
+{% endblock %}

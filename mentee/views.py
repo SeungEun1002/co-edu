@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from user.models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
@@ -54,26 +55,15 @@ def mentoring_application(request):
 
         if submit_btn == "취소":
             mentoring_request.status = 'cle'
-            mentoring_request.mentoring_timetable.status = 'ini'
-            mentoring_request.mentoring_timetable.mentee = mentoring_request.mentee
-            mentoring_request.mentoring_timetable.mentoring_subject = mentoring_request.mentoring_subject
-
-            mentoring_request.save()
-            mentoring_request.mentoring_timetable.save()
-
-        else:
-            mentoring_request.status = 'rej'
             mentoring_request.save()
 
 
-
-    ##고쳐야해!!!
     mentoring_waiting = MentoringRequest.objects.filter(status='ong', mentee=request.user).all()[:3]
-    ## 여기서 user가 뭐징..
     mentoring_request = MentoringRequest.objects.filter(mentee=request.user).exclude(status='ong').all()
 
     context = {
         'mentoring_waiting': mentoring_waiting,
         'mentoring_request': mentoring_request,
+        'path': reverse('mentee:mentoring_application')
     }
-    return render(request, 'mentee/mentoring_application.html')
+    return render(request, 'mentee/mentoring_application.html', context)

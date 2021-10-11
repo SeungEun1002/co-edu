@@ -37,9 +37,9 @@
         <nav id="colorlib-main-menu" role="navigation">
             <h1 class="site-title"><a href={% url "mentor:index" %}>Co-edu</a></h1>
             <ul>
-                <li class="colorlib-active"><a href={% url "mentor:mentoring_list" %}>멘토링 내역</a></li>
+                <li class="{% if request.resolver_match.url_name == 'mentoring_list' %}colorlib-active{% endif %}"><a href={% url "mentor:mentoring_list" %}>멘토링 내역</a></li>
                 <li><a href="#">멘티와의 대화</a></li>
-                <li><a href="#">내 일정</a></li>
+                <li class="{% if request.resolver_match.url_name == 'mentor_timetable' %}colorlib-active{% endif %}"><a href={% url "mentor:mentor_timetable" %}>내 일정</a></li>
                 <li><a href="#">내 정보</a></li>
             </ul>
             <a href={% url "mentee:index" %} class="btn btn-primary">멘티로 전환</a>
@@ -48,7 +48,6 @@
         </nav>
     </aside> <!-- END COLORLIB-ASIDE -->
 
-    <div class="left-nav-space">
         {% block content %}
         {% endblock %}
     </div>

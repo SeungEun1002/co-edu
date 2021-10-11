@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from .models import *
+from coedu.common import *
+from datetime import date, datetime, timedelta
 # Create your views here.
 
 def mentor_check(user):
@@ -46,3 +48,35 @@ def mentoring_list(request):
         'mentoring_timetable': mentoring_timetable,
     }
     return render(request, 'mentor/mentoring_list.html', context)
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def mentor_timetable(request):
+
+    time_list = get_timetable_time_list()
+    start, end, today = get_cur_week_datetime()
+
+    data = []
+    for idx, time in enumerate(time_list):
+        row = {
+            'time_str': time['str']
+        }
+
+        weekday_num_list = [2, 3, 4, 5, 6, 7, 1]
+        columns = []
+        for weekday_num in weekday_num_list:
+            timetable_obj = MentoringTimeTable.objects.filter(mentor=request.user.mentor, \
+                                                              start_datetime__gte=start, \
+                                                              start_datetime__lt=end, \
+                                                              start_datetime__hour=time['hour'], \
+                                                              start_datetime__week_day=weekday_num).first()
+            columns.append(timetable_obj)
+
+        row['columns'] = columns
+
+        data.append(row)
+    context = {
+        'data': data,
+    }
+
+    return render(request, 'mentor/mentor_timetable.html', context)
