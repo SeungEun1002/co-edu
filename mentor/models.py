@@ -29,4 +29,6 @@ class MentoringTimeTable(models.Model):
     mentee = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE)
     mentoring_subject = models.TextField(null=True, blank=True)
+    before_memo = models.TextField(null=True, blank=True)
+    after_memo = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=5, choices=STATUS_CHOICES)

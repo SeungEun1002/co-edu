@@ -4,6 +4,7 @@ from user.models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from mentor.models import *
+from user.forms import *
 
 @login_required
 def index(request):
@@ -29,6 +30,19 @@ def mentor_signup(request):
     else:
         form = MentorSignupForm()
     return render(request, 'mentee/mentor_signup.html', {'form': form})
+
+@login_required
+## 수정
+def mentee_info(request):
+    if request.method == 'POST':
+        form = UserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('mentee:index')
+
+    form = UserChangeForm(instance = request.user)
+    return render(request, 'mentee/mentee_info.html', {'form': form})
+
 
 @login_required
 def mentor_list(request):

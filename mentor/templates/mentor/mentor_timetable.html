@@ -32,12 +32,12 @@
                             <tr style="height: 30px">
                                 <td class="align-middle">{{ row.time_str }}</td>
                                 {% for col in row.columns %}
-                                    {% if col %}
-                                        <td onclick="tdClicked(this)" style="cursor: pointer; background-color:#D0F0C0" mentee_name="{{ col.mentee.name }}">
-                                            <div class="font-size15">{{ col.mentee.name }}</div>
+                                    {% if col.type == 'full' %}
+                                        <td class="full-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="tdClicked(this)" style="cursor: pointer; background-color:#D0F0C0" mentee_name="{{ col.obj.mentee.name }}">
+                                            <div class="font-size15">{{ col.obj.mentee.name }}</div>
                                         </td>
                                     {% else %}
-                                        <td>
+                                        <td class="empty-td" datetime="{{ col.obj|date:'Y-m-d H:i:s' }}" onclick="emptyCellModalClicked(this)">
                                         </td>
                                     {% endif %}
                                 {% endfor %}
@@ -50,12 +50,44 @@
                 </div>
             </div>
 
+<div id="empty-cell-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">새 일정 추가</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>새 일정을 추가하시겠습니까?</p>
+      </div>
+      <div class="modal-footer">
+          <form action="{% url 'mentor:empty_cell_modal' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="datetime" />
+              <input type="submit" class="btn btn-primary" value="추가" />
+              <input type="button" class="btn btn-secondary" data-dismiss="modal" value="취소" />
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
     <script>
         function tdClicked(obj) {
             alert(obj.getAttribute('mentee_name'));
+        }
+
+        function emptyCellModalClicked(obj){
+            const datetime = obj.getAttribute('datetime');
+            const modal = document.getElementById('empty-cell-modal');
+            const datetimeInput = modal.querySelector('input[name=datetime]');
+            datetimeInput.setAttribute('value', datetime);
+            $('#empty-cell-modal').modal('toggle');
         }
     </script>
 

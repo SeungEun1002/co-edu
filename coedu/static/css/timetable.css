@@ -110,3 +110,13 @@ body{
     vertical-align: top;
     border-top: 1px solid #dee2e6;
 }
+
+.empty-td {
+    cursor: pointer;
+    background-color:#D0F0C0;
+    opacity: 0;
+}
+
+.empty-td:hover {
+    opacity: 0.4;
+}
