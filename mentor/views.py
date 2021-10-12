@@ -21,12 +21,10 @@ def index(request):
 @user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
 def mentor_info(request):
     if request.method == 'POST':
-        #수정 요청
         form = MentorChangeForm(request.POST, instance=request.user.mentor)
         if form.is_valid():
             form.save()
-            ## mentee에서 할 때 password
-            return redirect('mentor:index')
+            return redirect('mentor:mentor_info')
 
     form = MentorChangeForm(instance = request.user.mentor)
     return render(request, 'mentor/mentor_info.html', {'form': form})
@@ -90,6 +88,7 @@ def mentor_timetable(request):
                 'type': 'full',
                 'obj': timetable_obj
             }
+            ##여기서 full말고 available이랑 complete도 추가해야 하는 것 아닌가?
             if not timetable_obj:
                 col['type'] = 'empty'
                 col['obj'] = start + timedelta(days=col_idx, hours=time['hour'])
@@ -100,6 +99,9 @@ def mentor_timetable(request):
 
         data.append(row)
     context = {
+        'start': start,
+        'end': end,
+        'today': today,
         'data': data,
     }
 
@@ -112,6 +114,18 @@ def empty_cell_modal(request):
     if request.method =='POST':
         datetime = request.POST.get('datetime')
         MentoringTimeTable.objects.create(start_datetime=datetime, mentor=request.user.mentor, status='ini')
+
+        return redirect('mentor:mentor_timetable')
+    else:
+        raise Http404('This view cannot get GET Request')
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def available_cell_modal(request):
+    if request.method =='POST':
+        datetime = request.POST.get('datetime')
+        MentoringTimeTable.objects.delete(start_datetime=datetime, mentor=request.user.mentor, status='ini')
 
         return redirect('mentor:mentor_timetable')
     else:

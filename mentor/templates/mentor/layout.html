@@ -35,7 +35,7 @@
     <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
     <aside id="colorlib-aside" role="complementary" class="js-fullheight">
         <nav id="colorlib-main-menu" role="navigation">
-            <h1 class="site-title"><a href={% url "mentor:index" %}>Co-edu</a></h1>
+            <h1 class="site-title underline-green"><a href={% url "mentor:index" %}>Co-edu</a></h1>
             <ul>
                 <li class="{% if request.resolver_match.url_name == 'mentoring_list' %}colorlib-active{% endif %}"><a href={% url "mentor:mentoring_list" %}>멘토링 내역</a></li>
                 <li><a href="#">멘티와의 대화</a></li>
@@ -49,6 +49,8 @@
     </aside> <!-- END COLORLIB-ASIDE -->
 
     <div class="left-nav-space py-5" >
+        <div class="right-bold"> {{ request.user.name }} 멘토님 환영합니다.</div>
+
         {% block content %}
         {% endblock %}
     </div>

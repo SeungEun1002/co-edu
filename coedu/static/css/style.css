@@ -14,11 +14,27 @@ body {
 .site-title {
     margin-top: 15px;
     margin-bottom: 30px;
-
 }
 
 .site-title a, .site-title a:hover {
     color: black;
+}
+
+.underline-red a {
+    text-decoration: underline;
+    text-decoration-color: #FF6768;
+}
+
+.underline-green a {
+    text-decoration: underline;
+    text-decoration-color: #008800;
+}
+
+.right-bold {
+    text-align: right;
+    font-weight: 600;
+    padding-right: 50px;
+    padding-bottom: 20px;
 }
 
 .card {

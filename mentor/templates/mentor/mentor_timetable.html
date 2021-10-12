@@ -28,6 +28,8 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <div>{{ start.date }}~ {{ end.date }}</div>
+
                             {% for row in data %}
                             <tr style="height: 30px">
                                 <td class="align-middle">{{ row.time_str }}</td>
@@ -54,13 +56,13 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">새 일정 추가</h5>
+        <h5 class="modal-title">멘토링 가능 시간 추가</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>새 일정을 추가하시겠습니까?</p>
+        <p>멘토링 가능 시간을 추가하시겠습니까?</p>
       </div>
       <div class="modal-footer">
           <form action="{% url 'mentor:empty_cell_modal' %}" method="post">
@@ -73,6 +75,33 @@
     </div>
   </div>
 </div>
+
+
+<div id="available-cell-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">멘토링 가능 시간 제거</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>멘토링 가능 시간을 제거하시겠습니까?</p>
+      </div>
+      <div class="modal-footer">
+          <form action="{% url 'mentor:available_cell_modal' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="datetime" />
+              <input type="submit" class="btn btn-danger" value="제거" />
+              <input type="button" class="btn btn-secondary" data-dismiss="modal" value="취소" />
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 {% endblock %}
 
@@ -89,6 +118,7 @@
             datetimeInput.setAttribute('value', datetime);
             $('#empty-cell-modal').modal('toggle');
         }
+
     </script>
 
 {% endblock %}

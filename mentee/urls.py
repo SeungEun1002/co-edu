@@ -9,5 +9,6 @@ urlpatterns = [
     path('mentor/signup/', mentor_signup, name="mentor_signup"),
     path('mentor/list/', mentor_list, name="mentor_list"),
     path('mentoring/application', mentoring_application, name="mentoring_application"),
+    path('timetable/', mentee_timetable, name="mentee_timetable"),
 ]
 

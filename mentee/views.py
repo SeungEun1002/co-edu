@@ -32,15 +32,14 @@ def mentor_signup(request):
     return render(request, 'mentee/mentor_signup.html', {'form': form})
 
 @login_required
-## 수정
 def mentee_info(request):
     if request.method == 'POST':
-        form = UserChangeForm(request.POST, instance=request.user)
+        form = MenteeChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('mentee:index')
+            return redirect('mentee:mentee_info')
 
-    form = UserChangeForm(instance = request.user)
+    form = MenteeChangeForm(instance = request.user)
     return render(request, 'mentee/mentee_info.html', {'form': form})
 
 
@@ -81,3 +80,8 @@ def mentoring_application(request):
         'path': reverse('mentee:mentoring_application')
     }
     return render(request, 'mentee/mentoring_application.html', context)
+
+
+@login_required
+def mentee_timetable(request):
+    return render(request, 'mentee/mentee_timetable.html')
