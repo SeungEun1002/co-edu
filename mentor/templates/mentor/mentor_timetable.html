@@ -1,5 +1,6 @@
 {% extends 'mentor/layout.html' %}
 {% load static %}
+{% load date_filter %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/timetable.css'%}">
@@ -28,7 +29,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <div>{{ start.date }}~ {{ end.date }}</div>
+                        <div style="font-size: 20px;"><a href="?start={{ start|plus_days:-7|date:'Y-m-d' }}"><i class="bi bi-caret-left-fill" style="cursor: pointer; " ></i></a> {{ start.date }}~ {{ end.date }} <a href="?start={{ start|plus_days:7|date:'Y-m-d' }}"><i class="bi bi-caret-right-fill" style="cursor: pointer;"></i></a></div>
 
                             {% for row in data %}
                             <tr style="height: 30px">

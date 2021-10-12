@@ -5,6 +5,8 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from mentor.models import *
 from user.forms import *
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 @login_required
 def index(request):
@@ -70,14 +72,40 @@ def mentoring_application(request):
             mentoring_request.status = 'cle'
             mentoring_request.save()
 
+    # 입력 파라미터
+    page = request.GET.get('page', '1')  # 페이지
+    kw = request.GET.get('kw', '')  # 검색어
+    status = request.GET.get('status', 'all')  # 필터링
 
+
+    # 기본 queryset
     mentoring_waiting = MentoringRequest.objects.filter(status='ong', mentee=request.user).all()[:3]
-    mentoring_request = MentoringRequest.objects.filter(mentee=request.user).exclude(status='ong').all()
+    mentoring_request = MentoringRequest.objects.filter(mentee=request.user).exclude(status='ong')
+
+
+    # 필터링
+    if status != 'all':
+        mentoring_request = mentoring_request.filter(status=status)
+
+    # 검색
+    if kw:
+        mentoring_request = mentoring_request.filter(
+            Q(mentor__user__name__icontains=kw) |  # 멘토 이름 검색
+            Q(mentoring_subject__icontains=kw)  # 멘토링 내용 검색
+        ).distinct()
+
+
+    # 페이징처리
+    paginator = Paginator(mentoring_request, 10)  # 페이지당 10개씩 보여주기
+    mentoring_request = paginator.get_page(page)
 
     context = {
         'mentoring_waiting': mentoring_waiting,
         'mentoring_request': mentoring_request,
-        'path': reverse('mentee:mentoring_application')
+        'path': reverse('mentee:mentoring_application'),
+        'page': page,
+        'kw': kw,
+        'status': status,
     }
     return render(request, 'mentee/mentoring_application.html', context)
 
