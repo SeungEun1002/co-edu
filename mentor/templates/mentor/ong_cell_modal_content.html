@@ -1,0 +1,19 @@
+<div>
+    <h5>멘티 정보</h5>
+        이름: {{ mentoring_timetable.mentee.name}} </br>
+        관심있는 분야: {{ mentoring_timetable.mentee.interest_subject }} </br>
+
+    </br>
+
+    <h5>멘토링 정보</h5>
+        내용: {{ mentoring_timetable.mentoring_subject }} </br>
+        시간: {{ mentoring_timetable.start_datetime }} </br>
+        진행 전 메모
+        <form action="{% url 'mentor:ong_cell_modal_content_before_memo' %}" method="post">
+            {% csrf_token %}
+            <textarea rows="5" name="before_memo" style="width: 100%;">{{ mentoring_timetable.before_memo }}</textarea>
+            <input type="hidden" name='pk' value="{{ mentoring_timetable.id  }}"/>
+            <input type="submit" class="btn btn-info" value="메모 수정"/>
+        </form>
+
+</div>

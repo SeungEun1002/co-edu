@@ -84,14 +84,22 @@ def mentor_timetable(request):
                                                               start_datetime__lt=end, \
                                                               start_datetime__hour=time['hour'], \
                                                               start_datetime__week_day=weekday_num).first()
-            col = {
-                'type': 'full',
-                'obj': timetable_obj
-            }
-            ##여기서 full말고 available이랑 complete도 추가해야 하는 것 아닌가?
-            if not timetable_obj:
-                col['type'] = 'empty'
-                col['obj'] = start + timedelta(days=col_idx, hours=time['hour'])
+            if timetable_obj:
+                col = {
+                    'obj': timetable_obj,
+                }
+                if timetable_obj.status == 'ini':
+                    col['type'] = 'ini'
+                elif timetable_obj.status == 'ong':
+                    col['type'] = 'ong'
+                elif timetable_obj.status == 'cpt':
+                    col['type'] = 'cpt'
+            else:
+                col = {
+                    'type': 'empty',
+                    'obj': start + timedelta(days=col_idx, hours=time['hour'])
+                }
+
 
             columns.append(col)
 
@@ -122,11 +130,62 @@ def empty_cell_modal(request):
 
 @login_required
 @user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
-def available_cell_modal(request):
+def ini_cell_modal(request):
     if request.method =='POST':
         datetime = request.POST.get('datetime')
-        MentoringTimeTable.objects.delete(start_datetime=datetime, mentor=request.user.mentor, status='ini')
-
+        mentoring_timetable = MentoringTimeTable.objects.filter(start_datetime=datetime, mentor=request.user.mentor).first()
+        mentoring_timetable.delete()
         return redirect('mentor:mentor_timetable')
     else:
         raise Http404('This view cannot get GET Request')
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def ong_cell_modal(request):
+    if request.method =='POST':
+        datetime = request.POST.get('datetime')
+        return redirect('mentor:mentor_timetable')
+    else:
+        raise Http404('This view cannot get GET Request')
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def ong_cell_modal_content(request):
+    pk = request.GET.get('pk')
+    mentoring_timetable = MentoringTimeTable.objects.get(id=pk)
+    context = {
+        'mentoring_timetable': mentoring_timetable
+    }
+    return render(request, 'mentor/ong_cell_modal_content.html', context)
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def ong_cell_modal_content_before_memo(request):
+
+    if request.method =='POST':
+        pk = request.POST.get('pk')
+        before_memo = request.POST.get('before_memo')
+        mentoring_timetable = MentoringTimeTable.objects.get(id=pk)
+        mentoring_timetable.before_memo = before_memo
+
+        mentoring_timetable.save()
+        return redirect('mentor:mentor_timetable')
+    else:
+        raise Http404('This view cannot get GET Request')
+
+
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def cpt_cell_modal(request):
+    if request.method =='POST':
+        datetime = request.POST.get('datetime')
+        return redirect('mentor:mentor_timetable')
+    else:
+        raise Http404('This view cannot get GET Request')
+
+
