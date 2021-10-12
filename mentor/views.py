@@ -181,6 +181,18 @@ def ini_cell_modal(request):
 def ong_cell_modal(request):
     if request.method =='POST':
         datetime = request.POST.get('datetime')
+        mentoring_timetable = MentoringTimeTable.objects.filter(start_datetime=datetime, mentor=request.user.mentor).first()
+        mentoring_request = MentoringRequest.objects.filter(status='act', mentoring_timetable= mentoring_timetable).first()
+        mentoring_timetable.status = 'ini'
+        mentoring_timetable.mentee = None
+        mentoring_timetable.mentoring_subject = None
+        mentoring_timetable.before_memo = None
+
+        mentoring_request.status = 'rej'
+
+        mentoring_timetable.save()
+        mentoring_request.save()
+
         return redirect('mentor:mentor_timetable')
     else:
         raise Http404('This view cannot get GET Request')
@@ -224,4 +236,30 @@ def cpt_cell_modal(request):
     else:
         raise Http404('This view cannot get GET Request')
 
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def cpt_cell_modal_content(request):
+    pk = request.GET.get('pk')
+    mentoring_timetable = MentoringTimeTable.objects.get(id=pk)
+    context = {
+        'mentoring_timetable': mentoring_timetable
+    }
+    return render(request, 'mentor/cpt_cell_modal_content.html', context)
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def cpt_cell_modal_content_after_memo(request):
+
+    if request.method =='POST':
+        pk = request.POST.get('pk')
+        after_memo = request.POST.get('after_memo')
+        mentoring_timetable = MentoringTimeTable.objects.get(id=pk)
+        mentoring_timetable.after_memo = after_memo
+
+        mentoring_timetable.save()
+        return redirect('mentor:mentor_timetable')
+    else:
+        raise Http404('This view cannot get GET Request')
 

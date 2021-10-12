@@ -43,7 +43,7 @@
                                         </td>
 
                                     {% elif col.type == 'cpt' %}
-                                        <td class="full-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="cptCellModalClicked(this)" style="cursor: pointer; background-color:#D0F0C0" mentoring_info ="{{ col.obj }}">
+                                        <td class="full-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="cptCellModalClicked(this)" style="cursor: pointer; background-color:#D0F0C0" pk="{{ col.obj.id }}" >
                                             <div class="font-size15">{{ col.obj.mentee.name }}</div>
                                         </td>
 
@@ -116,7 +116,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">멘토링 예정 내역</h5>
+        <h5 class="modal-title">예정된 멘토링 내역</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -128,6 +128,7 @@
               {% csrf_token %}
               <input type="hidden" name="datetime" />
               <input type="submit" class="btn btn-danger" value="일정 취소" />
+              //취소하시겠습니까? 떠야됨
               <input type="button" class="btn btn-secondary" data-dismiss="modal" value="확인" />
           </form>
       </div>
@@ -140,19 +141,17 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">멘토링 완료 내역</h5>
+        <h5 class="modal-title">완료된 멘토링 내역</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>내용을 채워야해</p>
       </div>
       <div class="modal-footer">
           <form action="{% url 'mentor:cpt_cell_modal' %}" method="post">
               {% csrf_token %}
               <input type="hidden" name="datetime" />
-              <input type="submit" class="btn btn-info" value="메모 추가" />
               <input type="button" class="btn btn-secondary" data-dismiss="modal" value="확인" />
           </form>
       </div>
@@ -204,8 +203,6 @@
             }
             xhttp.open("GET", "{% url 'mentor:ong_cell_modal_content' %}" + "?pk=" + pk, true);
             xhttp.send();
-
-
         }
 
         function cptCellModalClicked(obj){
@@ -213,7 +210,19 @@
             const modal = document.getElementById('cpt-cell-modal');
             const datetimeInput = modal.querySelector('input[name=datetime]');
             datetimeInput.setAttribute('value', datetime);
-            $('#cpt-cell-modal').modal('toggle');
+
+            const pk = obj.getAttribute('pk');
+
+            // 서버에 멘토링 html 내용을 요청해서 받아옴
+            const xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                // 1. 서버에서 응답으로 온 html을 모달창에 넣어주기
+                document.querySelector("#cpt-cell-modal .modal-body").innerHTML = this.responseText;
+                // 2. 모달창 보여주기
+                $('#cpt-cell-modal').modal('toggle');
+            }
+            xhttp.open("GET", "{% url 'mentor:cpt_cell_modal_content' %}" + "?pk=" + pk, true);
+            xhttp.send();
         }
 
     </script>
