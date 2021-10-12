@@ -6,6 +6,8 @@ from .models import *
 from coedu.common import *
 from datetime import date, datetime, timedelta
 from user.forms import *
+from django.db.models import Q
+from django.core.paginator import Paginator
 # Create your views here.
 
 def mentor_check(user):
@@ -52,14 +54,39 @@ def mentoring_list(request):
             mentoring_request.save()
 
 
+    # 입력 파라미터
+    page = request.GET.get('page', '1')  # 페이지
+    kw = request.GET.get('kw', '')  # 검색어
+    status = request.GET.get('status', 'ong')  # 필터링
 
 
+    # 기본 queryset
     mentoring_request = MentoringRequest.objects.filter(status='ong', mentor=request.user.mentor).all()[:3]
-    mentoring_timetable = MentoringTimeTable.objects.filter(mentor=request.user.mentor).exclude(status='ini').all()
+    mentoring_timetable = MentoringTimeTable.objects.filter(mentor=request.user.mentor).exclude(status='ini').order_by('start_datetime')
+
+
+    # 필터링
+    if status != 'all':
+        mentoring_timetable = mentoring_timetable.filter(status=status)
+
+    # 검색
+    if kw:
+        mentoring_timetable = mentoring_timetable.filter(
+            Q(mentee__name__icontains=kw) |  # 멘티 이름 검색
+            Q(mentoring_subject__icontains=kw)  # 멘토링 내용 검색
+        ).distinct()
+
+
+    # 페이징처리
+    paginator = Paginator(mentoring_timetable, 10)  # 페이지당 10개씩 보여주기
+    mentoring_timetable = paginator.get_page(page)
 
     context = {
         'mentoring_request': mentoring_request,
         'mentoring_timetable': mentoring_timetable,
+        'page': page,
+        'kw': kw,
+        'status': status,
     }
     return render(request, 'mentor/mentoring_list.html', context)
 
@@ -68,7 +95,16 @@ def mentoring_list(request):
 def mentor_timetable(request):
 
     time_list = get_timetable_time_list()
-    start, end, today = get_cur_week_datetime()
+    cur_start, cur_end, today = get_cur_week_datetime()
+
+    # 입력 파라미터
+    paging_start = request.GET.get('start')  # 페이지
+    if paging_start:
+        paging_start = datetime.datetime.strptime(paging_start, '%Y-%m-%d')
+    else:
+        paging_start = cur_start    # 이번주
+
+    paging_end = (paging_start + timedelta(days=6)).replace(hour=23, minute=59, second=0, microsecond=0)
 
     data = []
     for row_idx, time in enumerate(time_list):
@@ -80,8 +116,8 @@ def mentor_timetable(request):
         columns = []
         for col_idx, weekday_num in enumerate(weekday_num_list):
             timetable_obj = MentoringTimeTable.objects.filter(mentor=request.user.mentor, \
-                                                              start_datetime__gte=start, \
-                                                              start_datetime__lt=end, \
+                                                              start_datetime__gte=paging_start, \
+                                                              start_datetime__lt=paging_end, \
                                                               start_datetime__hour=time['hour'], \
                                                               start_datetime__week_day=weekday_num).first()
             if timetable_obj:
@@ -97,7 +133,7 @@ def mentor_timetable(request):
             else:
                 col = {
                     'type': 'empty',
-                    'obj': start + timedelta(days=col_idx, hours=time['hour'])
+                    'obj': paging_start + timedelta(days=col_idx, hours=time['hour'])
                 }
 
 
@@ -107,8 +143,8 @@ def mentor_timetable(request):
 
         data.append(row)
     context = {
-        'start': start,
-        'end': end,
+        'start': paging_start,
+        'end': paging_end,
         'today': today,
         'data': data,
     }
