@@ -1,0 +1,16 @@
+<div>
+    <h5>멘토 정보</h5>
+        이름: {{ mentoring_request.mentor.user.name}} </br>
+        전공: {{ mentoring_request.mentor.major}} </br>
+        멘토링 분야:
+            {{ mentoring_request.mentor.teaching_subject}} </br>
+
+    </br>
+
+    <h5>멘토링 신청 정보</h5>
+        내용: {{ mentoring_request.mentoring_subject }} </br>
+        시간: {{ mentoring_timetable.start_datetime }} </br>
+        진행 전 메모: {{ mentoring_timetable.before_memo }} </br>
+        진행 후 메모: {{ mentoring_timetable.after_memo }} </br>
+
+</div>

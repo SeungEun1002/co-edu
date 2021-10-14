@@ -34,16 +34,16 @@
                                 <td class="align-middle">{{ row.time_str }}</td>
                                 {% for col in row.columns %}
                                     {% if col.type == 'ini' %}
-                                        <td class="full-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="iniCellModalClicked(this)" style="cursor: pointer; background-color:#D0F0C0" >
+                                        <td class="full-green-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="iniCellModalClicked(this)" style="cursor: pointer;" >
                                         </td>
 
                                     {% elif col.type == 'ong' %}
-                                        <td class="full-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="ongCellModalClicked(this)" style="cursor: pointer; background-color:#D0F0C0" pk="{{ col.obj.id }}" >
+                                        <td class="full-green-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="ongCellModalClicked(this)" style="cursor: pointer;" pk="{{ col.obj.id }}" >
                                             <div class="font-size15">{{ col.obj.mentee.name }}</div>
                                         </td>
 
                                     {% elif col.type == 'cpt' %}
-                                        <td class="full-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="cptCellModalClicked(this)" style="cursor: pointer; background-color:#D0F0C0" pk="{{ col.obj.id }}" >
+                                        <td class="full-green-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="cptCellModalClicked(this)" style="cursor: pointer;" pk="{{ col.obj.id }}" >
                                             <div class="font-size15">{{ col.obj.mentee.name }}</div>
                                         </td>
 
@@ -55,7 +55,7 @@
                                 {% endfor %}
                             </tr>
 
-                        {% endfor %}
+                            {% endfor %}
 
                         </tbody>
                     </table>
@@ -124,11 +124,10 @@
       <div class="modal-body">
       </div>
       <div class="modal-footer">
-          <form action="{% url 'mentor:ong_cell_modal' %}" method="post">
+          <form action="{% url 'mentor:ong_cell_modal' %}" method="post" onsubmit="return confirm('일정을 정말 취소하시겠습니까?')">
               {% csrf_token %}
               <input type="hidden" name="datetime" />
               <input type="submit" class="btn btn-danger" value="일정 취소" />
-              //취소하시겠습니까? 떠야됨
               <input type="button" class="btn btn-secondary" data-dismiss="modal" value="확인" />
           </form>
       </div>

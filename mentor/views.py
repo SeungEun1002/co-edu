@@ -183,6 +183,7 @@ def ong_cell_modal(request):
         datetime = request.POST.get('datetime')
         mentoring_timetable = MentoringTimeTable.objects.filter(start_datetime=datetime, mentor=request.user.mentor).first()
         mentoring_request = MentoringRequest.objects.filter(status='act', mentoring_timetable= mentoring_timetable).first()
+
         mentoring_timetable.status = 'ini'
         mentoring_timetable.mentee = None
         mentoring_timetable.mentoring_subject = None

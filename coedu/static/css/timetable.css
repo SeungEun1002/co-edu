@@ -121,3 +121,43 @@ body{
     opacity: 0.4;
 }
 
+.empty-td {
+    cursor: pointer;
+    background-color:#008800;
+    opacity: 0;
+}
+
+.empty-td:hover {
+    opacity: 0.1;
+}
+
+.full-green-td {
+    cursor: pointer;
+    background-color: #008800;
+    opacity: 0.2;
+}
+
+.full-green-td:hover {
+    opacity: 0.3;
+}
+
+.full-red-td {
+    cursor: pointer;
+    background-color:#FF6768;
+    opacity: 0.4;
+}
+
+.full-red-td:hover {
+    opacity: 0.5;
+}
+
+.full-light-red-td {
+    cursor: pointer;
+    background-color:#FF6768;
+    opacity: 0.1;
+}
+
+.full-light-red-td:hover {
+    opacity: 0.2;
+}
+
