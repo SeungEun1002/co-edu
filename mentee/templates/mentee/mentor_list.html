@@ -2,12 +2,54 @@
 
 
 {% block content %}
-    <div class="container">
-        {%for inner_list in mentor_list %}
-          <div class="row">
-              {% for inst in inner_list %}
-                <div class="col">
-                      <div class="card" style="width: 18rem;">
+    <div class="container px-5 py-5">
+
+        <div style="padding: 20px;">
+        <form id="searchForm" method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" id="page" name="page" value="{{ page }}">
+
+            <div class="d-flex">
+                <label class="input-label" >멘토 검색</label>
+                <input type="text" name="mentor-search" style="width: 300px;" value="{{ mentor_search|default_if_none:'' }}">
+            </div>
+
+            <div class="d-flex align-items-center my-4">
+                <label class="input-label">과목</label>
+                <div style="margin-left: 20px">
+                    {% for subject in subject_list %}
+                        <span class="chk_box">
+                            <input type="checkbox" name="subject-search" id="subject{{ subject.code }}" value="{{ subject.code }}" {% if subject.code|slugify in subject_search %}checked{% endif %} >
+                            <label for="subject{{ subject.code }}">{{ subject.name }}</label>
+                        </span>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="d-flex align-items-center my-4">
+                <label class="input-label">출신 학교</label>
+                <div>
+                    <span class="chk_box">
+                        <input type="checkbox" name="univ-search" id="univ-same" value="same" {% if 'same' in univ_search %}checked{% endif %}>
+                        <label for="univ-same">같은 학교</label>
+                    </span>
+                    <span class="chk_box">
+                        <input type="checkbox" name="univ-search" id="univ-diff" value="diff" {% if 'diff' in univ_search %}checked{% endif %}>
+                        <label for="univ-diff">다른 학교</label>
+                    </span>
+                </div>
+
+            </div>
+
+            <input type="submit" class="btn btn-outline-primary" value="검색하기"/>
+        </form>
+        </div>
+
+        <div class="row">
+              {% for inst in mentor_list %}
+                <div class="col col-4">
+                      <div class="card" style="width: 18rem; height: 240px; cursor:pointer;" onclick="window.location.href='{% url "mentee:mentor_detail" %}?mentor_id={{ inst.user.pk }}'">
                         <div class="card-body">
                             <h5 class="card-title"> {{ inst.user.name }} </h5>
                             <!--<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
@@ -15,8 +57,8 @@
                             <p class="card-text">
                                 <ul>
                                     <li><i class="bi bi-award"></i>{{ inst.major }}/{{ inst.user.admission_year|slice:"2:4"}}학번</li>
-                                    <li> {{ inst.user.gender }} </li>
-                                    <li> {{ inst.teaching_subject }} </li>
+                                    <li> {{ inst.user.get_gender_display }} </li>
+                                    <li> {{ inst.teaching_subject|linebreaksbr|truncatechars:'40' }} </li>
                                 </ul>
                             </p>
                             <!--
@@ -28,6 +70,56 @@
                 </div>
               {% endfor %}
           </div>
-        {% endfor %}
     </div>
+
+    <!-- 페이징처리 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if mentor_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ mentor_list.previous_page_number }}" href="#">이전</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+            </li>
+        {% endif %}
+        <!-- 페이지리스트 -->
+        {% for page_number in mentor_list.paginator.page_range %}
+            {% if page_number >= mentor_list.number|add:-5 and page_number <= mentor_list.number|add:5 %}
+                {% if page_number == mentor_list.number %}
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" data-page="{{ page_number }}" href="#">{{ page_number }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" data-page="{{ page_number }}" href="#">{{ page_number }}</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if mentor_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ mentor_list.next_page_number }}" href="#">다음</a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+            </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징처리 끝 -->
+
+{% endblock %}
+
+{% block extra_js %}
+    <script type='text/javascript'>
+        $(document).ready(function(){
+            $(".page-link").on('click', function() {
+                $("#page").val($(this).data("page"));
+                $("#searchForm").submit();
+            });
+        });
+    </script>
 {% endblock %}

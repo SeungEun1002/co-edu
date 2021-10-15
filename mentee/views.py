@@ -47,18 +47,65 @@ def mentee_info(request):
 
 @login_required
 def mentor_list(request):
-    qs = Mentor.objects.all()[:4]   # TODO: Paging
-    mentor_list = list()
-    for i in range(2):
-        inner_list = list()
-        for j in range (2):
-            inner_list.append(qs[2*i+j])
-        mentor_list.append(inner_list)
+    print(request.POST)
+
+    # 입력 파라미터
+    page = request.POST.get('page', '1')  # 페이지
+    mentor_search = request.POST.get('mentor-search', '')  # 검색어
+    subject_search = request.POST.getlist('subject-search', [])  # 과목 검색
+    univ_search = request.POST.getlist('univ-search', [])  # 대학 검색
+
+    qs = Mentor.objects.all()
+
+    # qs 필터링
+    ## 검색어
+    qs = qs.filter(Q(user__name__icontains=mentor_search) |
+                   Q(teaching_subject__icontains=mentor_search) |
+                   Q(subject__name__icontains=mentor_search))
+
+    ## 과목 검색
+    if subject_search:
+        qs = qs.filter(subject__code__in=subject_search)
+
+    ## 대학 검색
+    if len(univ_search) == 1:
+        if 'same' in univ_search:
+            qs = qs.filter(user__university=request.user.university)
+        elif 'diff' in univ_search:
+            qs = qs.exclude(user__university=request.user.university)
+
+    ## 중복 제거
+    qs = qs.distinct()
+
+    # 페이징처리
+    paginator = Paginator(qs, 9)  # 페이지당 9개씩 보여주기
+    mentor_list = paginator.get_page(page)
+
+    # 기타 queryset
+    subject_list = Subject.objects.all()
 
     context = {
-        'mentor_list': mentor_list
+        'mentor_list': mentor_list,
+        'subject_list': subject_list,
+        'page': page,
+        'mentor_search': mentor_search,
+        'subject_search': subject_search,
+        'univ_search': univ_search,
     }
     return render(request, 'mentee/mentor_list.html', context)
+
+
+@login_required
+def mentor_detail(request):
+    mentor_id = request.GET.get('mentor_id')
+
+    mentor = Mentor.objects.get(user__id=mentor_id)
+
+    context = {
+        'mentor': mentor
+    }
+
+    return render(request, 'mentee/mentor_detail.html', context)
 
 @login_required
 def mentoring_application(request):
@@ -108,6 +155,18 @@ def mentoring_application(request):
         'status': status,
     }
     return render(request, 'mentee/mentoring_application.html', context)
+
+
+@login_required
+def mentoring_request(request):
+    mentor_id = request.GET.get('mentor_id')
+
+    mentor = Mentor.objects.get(user__id=mentor_id)
+
+    context = {
+        'mentor': mentor,
+    }
+    return render(request, 'mentee/mentoring_request.html', context)
 
 
 @login_required
