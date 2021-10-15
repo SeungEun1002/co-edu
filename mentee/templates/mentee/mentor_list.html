@@ -16,7 +16,7 @@
                                 <ul>
                                     <li><i class="bi bi-award"></i>{{ inst.major }}/{{ inst.user.admission_year|slice:"2:4"}}학번</li>
                                     <li> {{ inst.user.gender }} </li>
-                                    <li> {{ inst.teaching_subject }} </li>
+                                    <li> {{ inst.teaching_subject |linebreaksbr }} </li>
                                 </ul>
                             </p>
                             <!--

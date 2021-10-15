@@ -41,13 +41,14 @@ def mentoring_list(request):
 
         mentoring_request = MentoringRequest.objects.get(id=id)
         if submit_btn == "수락":
-            mentoring_request.status = 'act'
-            mentoring_request.mentoring_timetable.status = 'ong'
-            mentoring_request.mentoring_timetable.mentee = mentoring_request.mentee
-            mentoring_request.mentoring_timetable.mentoring_subject = mentoring_request.mentoring_subject
+            if mentoring_request.mentoring_timetable.status == 'ini':
+                mentoring_request.status = 'act'
+                mentoring_request.mentoring_timetable.status = 'ong'
+                mentoring_request.mentoring_timetable.mentee = mentoring_request.mentee
+                mentoring_request.mentoring_timetable.mentoring_subject = mentoring_request.mentoring_subject
 
-            mentoring_request.save()
-            mentoring_request.mentoring_timetable.save()
+                mentoring_request.save()
+                mentoring_request.mentoring_timetable.save()
 
         else:
             mentoring_request.status = 'rej'
