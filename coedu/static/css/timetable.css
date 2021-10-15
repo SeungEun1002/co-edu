@@ -111,14 +111,9 @@ body{
     border-top: 1px solid #dee2e6;
 }
 
-.empty-td {
-    cursor: pointer;
+.empty-stable-td {
     background-color:#D0F0C0;
     opacity: 0;
-}
-
-.empty-td:hover {
-    opacity: 0.4;
 }
 
 .empty-td {
@@ -129,6 +124,11 @@ body{
 
 .empty-td:hover {
     opacity: 0.1;
+}
+
+.full-green-stable-td {
+    background-color: #008800;
+    opacity: 0.2;
 }
 
 .full-green-td {

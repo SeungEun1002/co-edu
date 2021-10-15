@@ -1,10 +1,118 @@
 {% extends 'mentee/layout.html' %}
+{% load static %}
+{% load date_filter %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/timetable.css'%}">
+{% endblock %}
 
 
 {% block content %}
 
     <div class="d-flex flex-column align-items-center">
-        <h2>{{ mentor.user.name }} 멘토님께 멘토링 신청</h2>
+        <h2>{{ mentor.user.name }} 멘토님 시간표</h2>
     </div>
+
+<div class="container">
+                <div class="timetable-img text-center">
+                    <img src="img/content/timetable.png" alt="">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr class="bg-light-gray">
+                                <th class="text-uppercase" style="width:16%">시간
+                                </th>
+                                <th class="text-uppercase" style="width:12%">월</th>
+                                <th class="text-uppercase" style="width:12%">화</th>
+                                <th class="text-uppercase" style="width:12%">수</th>
+                                <th class="text-uppercase" style="width:12%">목</th>
+                                <th class="text-uppercase" style="width:12%">금</th>
+                                <th class="text-uppercase" style="width:12%">토</th>
+                                <th class="text-uppercase" style="width:12%">일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <div style="font-size: 20px;"><a href="?start={{ start|plus_days:-7|date:'Y-m-d' }}"><i class="bi bi-caret-left-fill" style="cursor: pointer; " ></i></a> {{ start.date }}~ {{ end.date }} <a href="?start={{ start|plus_days:7|date:'Y-m-d' }}"><i class="bi bi-caret-right-fill" style="cursor: pointer;"></i></a></div>
+
+                            {% for row in data %}
+                            <tr style="height: 30px">
+                                <td class="align-middle">{{ row.time_str }}</td>
+                                {% for col in row.columns %}
+                                    {% if col.type == 'ini' %}
+                                        <td class="full-green-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="mentoringRequestModalClicked(this)" pk="{{ col.obj.id }}" time="{{ col.obj.start_datetime|date:'m월 d일 H시' }}">
+                                        </td>
+
+                                    {% elif col.type == 'ong' %}
+                                        <td class="full-green-stable-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" pk="{{ col.obj.id }}" >
+                                            <div class="font-size15">진행 중</div>
+                                        </td>
+
+                                    {% elif col.type == 'cpt' %}
+                                        <td class="full-green-stable-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" pk="{{ col.obj.id }}" >
+                                            <div class="font-size15">완료</div>
+                                        </td>
+
+                                    {% else %}
+                                        <td class="empty-stable-td" datetime="{{ col.obj|date:'Y-m-d H:i:s' }}" >
+                                        </td>
+
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+<div id="mentoring-request-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">멘토링 신청하기</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="px-4 pb-3">
+          시간: <span class="start-datetime"></span>부터 1시간 </br>
+          원하는 멘토링 내용:
+          <form action="{% url 'mentee:mentoring_request_modal' %}" method="post" onsubmit="return confirm('멘토링 신청 내용은 수정이 불가능합니다. 신청하시겠습니까?')">
+              {% csrf_token %}
+              <input type="hidden" name="datetime" />
+              <input type="hidden" name='pk' />
+              <textarea rows="5" name="mentoring_subject" style="width: 100%;"></textarea>
+              <input type="submit" class="btn btn-primary" value="신청" />
+              <input type="button" class="btn btn-secondary" data-dismiss="modal" value="취소" />
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        function mentoringRequestModalClicked(obj){
+            const time = obj.getAttribute('time');
+            const pk = obj.getAttribute('pk');
+
+            const timeSpan = document.querySelector('#mentoring-request-modal .start-datetime');
+            timeSpan.innerHTML = time;
+
+            const pkInput = document.querySelector('#mentoring-request-modal input[name=pk]');
+            pkInput.setAttribute('value', pk);
+
+            $('#mentoring-request-modal').modal('toggle');
+
+        }
+    </script>
 
 {% endblock %}

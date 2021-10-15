@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from user.models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
@@ -163,12 +163,60 @@ def mentoring_application(request):
 @login_required
 def mentoring_request(request):
     mentor_id = request.GET.get('mentor_id')
-
     mentor = Mentor.objects.get(user__id=mentor_id)
+    time_list = get_timetable_time_list()
+    cur_start, cur_end, today = get_cur_week_datetime()
 
+    # 입력 파라미터
+    paging_start = request.GET.get('start')  # 페이지
+    if paging_start:
+        paging_start = datetime.datetime.strptime(paging_start, '%Y-%m-%d')
+    else:
+        paging_start = cur_start    # 이번주
+
+    paging_end = (paging_start + timedelta(days=6)).replace(hour=23, minute=59, second=0, microsecond=0)
+
+    data = []
+    for row_idx, time in enumerate(time_list):
+        row = {
+            'time_str': time['str']
+        }
+
+        weekday_num_list = [2, 3, 4, 5, 6, 7, 1]
+        columns = []
+        for col_idx, weekday_num in enumerate(weekday_num_list):
+            timetable_obj = MentoringTimeTable.objects.filter(mentor=mentor, \
+                                                              start_datetime__gte=paging_start, \
+                                                              start_datetime__lt=paging_end, \
+                                                              start_datetime__hour=time['hour'], \
+                                                              start_datetime__week_day=weekday_num).first()
+            if timetable_obj:
+                col = {
+                    'obj': timetable_obj,
+                }
+                if timetable_obj.status == 'ini':
+                    col['type'] = 'ini'
+                elif timetable_obj.status == 'ong':
+                    col['type'] = 'ong'
+                elif timetable_obj.status == 'cpt':
+                    col['type'] = 'cpt'
+            else:
+                col = {
+                    'type': 'empty',
+                    'obj': paging_start + timedelta(days=col_idx, hours=time['hour'])
+                }
+            columns.append(col)
+        row['columns'] = columns
+
+        data.append(row)
     context = {
+        'start': paging_start,
+        'end': paging_end,
+        'today': today,
+        'data': data,
         'mentor': mentor,
     }
+
     return render(request, 'mentee/mentoring_request.html', context)
 
 
@@ -314,3 +362,26 @@ def cpt_cell_modal_content(request):
         'mentoring_request': mentoring_request
     }
     return render(request, 'mentee/cpt_cell_modal_content.html', context)
+
+
+@login_required
+def mentoring_request_modal(request):
+    if request.method =='POST':
+        pk = request.POST.get('pk')
+        mentoring_timetable = MentoringTimeTable.objects.get(id=pk)
+        mentoring_subject = request.POST.get('mentoring_subject')
+        mentoring_request = MentoringRequest.objects.create(mentee=request.user, mentor=mentoring_timetable.mentor, mentoring_subject=mentoring_subject, mentoring_timetable=mentoring_timetable, status='ong')
+
+        return HttpResponseRedirect(reverse('mentee:mentoring_request') + '?mentor_id=' + str(mentoring_request.mentor.user.id))
+    else:
+        raise Http404('This view cannot get GET Request')
+
+
+@login_required
+def mentoring_request_modal_content(request):
+    if request.method =='POST':
+
+        datetime = request.POST.get('datetime')
+        return redirect('mentee:mentoring_request')
+    else:
+        raise Http404('This view cannot get GET Request')
