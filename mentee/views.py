@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, Http404
+from django.views.decorators.csrf import csrf_exempt
+
 from user.models import *
 from .forms import *
+from .models import *
 from django.contrib.auth.decorators import login_required
 from mentor.models import *
 from user.forms import *
@@ -10,6 +13,7 @@ from datetime import date, datetime, timedelta
 from coedu.common import *
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 
 @login_required
 def index(request):
@@ -103,9 +107,14 @@ def mentor_detail(request):
     mentor_id = request.GET.get('mentor_id')
 
     mentor = Mentor.objects.get(user__id=mentor_id)
+    chat_list = Chat.objects.filter(Q(sender=request.user) | Q(receiver=request.user))  \
+                            .filter(Q(sender=mentor.user) | Q(receiver=mentor.user)) \
+                            .distinct() \
+                            .order_by('created_datetime')
 
     context = {
-        'mentor': mentor
+        'mentor': mentor,
+        'chat_list': chat_list,
     }
 
     return render(request, 'mentee/mentor_detail.html', context)
@@ -314,3 +323,17 @@ def cpt_cell_modal_content(request):
         'mentoring_request': mentoring_request
     }
     return render(request, 'mentee/cpt_cell_modal_content.html', context)
+
+@login_required
+@csrf_exempt
+def send_chat(request):
+    content =request.POST.get('content')
+    sender_id =request.POST.get('sender_id')
+    receiver_id =request.POST.get('receiver_id')
+
+    Chat.objects.create(sender_id=sender_id, receiver_id=receiver_id, content=content)
+
+    result = {
+        'status': 'success'
+    }
+    return JsonResponse(result)
