@@ -20,6 +20,7 @@ urlpatterns = [
     path('mentoringong_cell_modal/', mentoringong_cell_modal, name="mentoringong_cell_modal"),
     path('cpt_cell_modal/content/', cpt_cell_modal_content, name="cpt_cell_modal_content"),
     path('cpt_cell_modal/', cpt_cell_modal, name="cpt_cell_modal"),
+    path('send/chat/', send_chat, name="send_chat"),
 
 ]
 

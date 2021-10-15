@@ -34,8 +34,92 @@
         </div>
 
         <div class="py-2">
-            <button type="button" class="btn btn-outline-primary mr-2">쪽지 보내기</button>
+            <button type="button" class="btn btn-outline-primary mr-2" onclick="chatClicked(this)">쪽지 보내기</button>
             <a href="{% url 'mentee:mentoring_request' %}?mentor_id={{ mentor.user.id }}" class="btn btn-outline-primary">멘토링 신청하기</a>
         </div>
     </div>
+
+
+    <div id="chat-modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ mentor.user.name }} 멘토님과 쪽지</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-3" >
+                    <div style="height: 50vh; overflow: hidden; width:100%; " >
+                        <div id="chat-body" style="width: 100%; height: 100%; overflow-y: scroll; padding-right: 17px; box-sizing: content-box;">
+                            {% for chat in chat_list %}
+                                <div class="my-2" style="{% if chat.sender == request.user %}text-align: right;{% else %}text-align: left;{% endif %}">
+                                    {% comment %}
+                                    {% if chat.sender == request.user %}
+                                        <div style="display: inline-block; vertical-align: bottom; font-size: 10px;">
+                                            {{ chat.created_datetime|date:"m월 d일 H시 i분" }}
+                                        </div>
+                                    {% endif %}
+                                   {% endcomment %}
+                                    <div class="card py-2 px-2 m-0" style="display: inline-block; max-width: 45%;">
+                                        {{ chat.content }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex mt-3">
+                        <textarea id="chat-content" rows="1" name="content" class="form-control mr-2"></textarea>
+                        <input type="button" class="btn btn-outline-secondary" value="보내기" onclick="chatSending(this);"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+    function chatClicked(obj){
+        $('#chat-modal').modal('toggle');
+
+        let chatBody = document.getElementById('chat-body');
+        chatBody.scrollTo(0, chatBody.scrollHeight);
+
+    }
+
+    function chatSending(sendButton){
+        // Get content dom element
+        let chatInput = document.getElementById('chat-content')
+        let chatBody = document.getElementById('chat-body')
+
+        // Make form data
+        var formData = new FormData();
+        formData.append("content", chatInput.value);
+        formData.append("sender_id", "{{ request.user.id }}");
+        formData.append("receiver_id", "{{ mentor.user.id }}");
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+            // Update chatBody
+            chatBody.innerHTML += `
+                <div class="my-2" style="text-align: right;">
+                    <div class="card py-2 px-2 m-0" style="display: inline-block; max-width: 45%;">
+                        ${chatInput.value}
+                    </div>
+                </div>
+            `
+
+            chatBody.scrollTo(0, chatBody.scrollHeight);
+
+            // Initialize chat input
+            chatInput.value = '';
+        }
+        xhttp.open("POST", "{% url 'mentee:send_chat' %}", true);
+        xhttp.send(formData);
+    }
+</script>
 {% endblock %}

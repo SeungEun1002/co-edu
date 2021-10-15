@@ -48,7 +48,7 @@
         <div class="row">
               {% for inst in mentor_list %}
                 <div class="col col-4">
-                      <div class="card" style="width: 18rem; height: 240px; cursor:pointer;" onclick="window.location.href='{% url "mentee:mentor_detail" %}?mentor_id={{ inst.user.pk }}'">
+                      <div class="card highlight" style="width: 18rem; height: 240px; cursor:pointer;" onclick="window.location.href='{% url "mentee:mentor_detail" %}?mentor_id={{ inst.user.pk }}'">
                         <div class="card-body">
                             <h5 class="card-title"> {{ inst.user.name }} </h5>
                             <!--<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>

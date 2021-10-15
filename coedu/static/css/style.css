@@ -41,7 +41,7 @@ body {
     margin: 10px auto;
 }
 
-.card:hover {
+.card.highlight:hover {
     border-color: rgba(255, 103, 104, 0.53);
     border-width: 2px;
 }
