@@ -1,0 +1,41 @@
+{% extends 'mentee/layout.html' %}
+
+{% block content %}
+    <div class="container py-5" style="padding-left: 140px;">
+        <div>
+            <h4>멘토 정보</h4>
+            <ul style="padding-left: 18px;">
+                <li>
+                    이름: {{ mentor.user.name }}
+                </li>
+                <li>
+                    전공:
+                    {% for subject in mentor.subject.all %}
+                        {{ subject.name }}
+                    {% endfor %}
+                </li>
+                <li>
+                   출신 대학: {{ mentor.user.university }}
+                </li>
+                <li>
+                    대학 입학년도: {{ mentor.user.admission_year }}
+                </li>
+            </ul>
+        </div>
+
+        <div class="my-3">
+            <h4>소개글</h4>
+            <div>{{ mentor.introduction }}</div>
+        </div>
+
+        <div class="my-3">
+            <h4>멘토링 과목</h4>
+            <div>{{ mentor.teaching_subject|linebreaksbr }}</div>
+        </div>
+
+        <div class="py-2">
+            <button type="button" class="btn btn-outline-primary mr-2">쪽지 보내기</button>
+            <a href="{% url 'mentee:mentoring_request' %}?mentor_id={{ mentor.user.id }}" class="btn btn-outline-primary">멘토링 신청하기</a>
+        </div>
+    </div>
+{% endblock %}

@@ -41,3 +41,25 @@ body {
     margin: 10px auto;
 }
 
+.card:hover {
+    border-color: rgba(255, 103, 104, 0.53);
+    border-width: 2px;
+}
+
+.input-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+    width: 80px;
+}
+
+.chk_box {
+    margin: 0 5px;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.chk_box input {
+    width: 20px;
+    height: 20px;
+}
