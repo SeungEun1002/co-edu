@@ -204,7 +204,11 @@ def mentoring_request(request):
                 col = {
                     'obj': timetable_obj,
                 }
-                if timetable_obj.status == 'ini':
+                mentoring_request = MentoringRequest.objects.filter(mentee=request.user, \
+                                                                    mentoring_timetable__start_datetime=timetable_obj.start_datetime).first()
+                if mentoring_request:
+                    col['type'] = 'overlap'
+                elif timetable_obj.status == 'ini':
                     col['type'] = 'ini'
                 elif timetable_obj.status == 'ong':
                     col['type'] = 'ong'

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'mentor',
     'mentee',
     'django_extensions',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = '/user/login/'
+
+CRONJOBS = [
+    ('0 * * * *', 'coedu.cron.hello', f'>> {os.path.join(BASE_DIR, "coedu", "cron.log")}')
+]

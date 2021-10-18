@@ -39,7 +39,12 @@
                             <tr style="height: 30px">
                                 <td class="align-middle">{{ row.time_str }}</td>
                                 {% for col in row.columns %}
-                                    {% if col.type == 'ini' %}
+                                    {% if col.type == 'overlap' %}
+                                        <td class="full-gray-stable-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" pk="{{ col.obj.id }}" >
+                                            <div class="font-size15">겹침</div>
+                                        </td>
+
+                                    {% elif col.type == 'ini' %}
                                         <td class="full-green-td" onclick="mentoringRequestModalClicked(this)" pk="{{ col.obj.id }}" time="{{ col.obj.start_datetime|date:'m월 d일 H시' }}" mentor_id="{{ col.obj.mentor.user.id }}" datetime="{{ col.obj.start_datetime }}">
                                         </td>
 

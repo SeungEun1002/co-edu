@@ -126,6 +126,14 @@ body{
     opacity: 0.1;
 }
 
+
+.full-gray-stable-td {
+    background-color: #000000;
+    opacity: 0.2;
+}
+
+
+
 .full-green-stable-td {
     background-color: #008800;
     opacity: 0.2;

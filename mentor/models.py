@@ -24,7 +24,6 @@ class MentoringTimeTable(models.Model):
         ('unc', '멘토링 미완료'),
     )
 
-
     start_datetime = models.DateTimeField()
     mentee = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE)
