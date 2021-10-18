@@ -13,6 +13,7 @@ urlpatterns = [
     path('mentoring_request_modal/content/', mentoring_request_modal_content, name="mentoring_request_modal_content"),
     path('mentoring_request_modal/', mentoring_request_modal, name="mentoring_request_modal"),
     path('mentoring/request/', mentoring_request, name="mentoring_request"),
+    path('chatlist/', mentee_chatlist, name="mentee_chatlist"),
     path('timetable/', mentee_timetable, name="mentee_timetable"),
     path('requestong_cell_modal/content/', requestong_cell_modal_content, name="requestong_cell_modal_content"),
     path('requestong_cell_modal/', requestong_cell_modal, name="requestong_cell_modal"),

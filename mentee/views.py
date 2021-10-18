@@ -8,15 +8,17 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from mentor.models import *
 from user.forms import *
-from datetime import date, datetime, timedelta
 from coedu.common import *
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 
+from datetime import date, datetime, timedelta
+
+
 @login_required
 def index(request):
-    return render(request, 'mentee/layout.html')
+    return render(request, 'mentee/home.html')
 
 @login_required
 def mentor_signup(request):
@@ -178,7 +180,7 @@ def mentoring_request(request):
     # 입력 파라미터
     paging_start = request.GET.get('start')  # 페이지
     if paging_start:
-        paging_start = datetime.datetime.strptime(paging_start, '%Y-%m-%d')
+        paging_start = datetime.strptime(paging_start, '%Y-%m-%d')
     else:
         paging_start = cur_start    # 이번주
 
@@ -236,7 +238,7 @@ def mentee_timetable(request):
     # 입력 파라미터
     paging_start = request.GET.get('start')  # 페이지
     if paging_start:
-        paging_start = datetime.datetime.strptime(paging_start, '%Y-%m-%d')
+        paging_start = datetime.strptime(paging_start, '%Y-%m-%d')
     else:
         paging_start = cur_start    # 이번주
 
@@ -378,9 +380,15 @@ def mentoring_request_modal(request):
         pk = request.POST.get('pk')
         mentoring_timetable = MentoringTimeTable.objects.get(id=pk)
         mentoring_subject = request.POST.get('mentoring_subject')
-        mentoring_request = MentoringRequest.objects.create(mentee=request.user, mentor=mentoring_timetable.mentor, mentoring_subject=mentoring_subject, mentoring_timetable=mentoring_timetable, status='ong')
 
-        return HttpResponseRedirect(reverse('mentee:mentoring_request') + '?mentor_id=' + str(mentoring_request.mentor.user.id))
+        mentoring_already = MentoringRequest.objects.filter(mentee=request.user, mentoring_timetable__start_datetime=mentoring_timetable.start_datetime, status__in=['act', 'ong']).first()
+
+        if not mentoring_already:
+            mentoring_request = MentoringRequest.objects.create(mentee=request.user, mentor=mentoring_timetable.mentor, mentoring_subject=mentoring_subject, mentoring_timetable=mentoring_timetable, status='ong')
+
+        return HttpResponseRedirect(reverse('mentee:mentoring_request') + '?mentor_id=' + str(mentoring_timetable.mentor.user.id))
+
+
     else:
         raise Http404('This view cannot get GET Request')
 
@@ -388,7 +396,6 @@ def mentoring_request_modal(request):
 @login_required
 def mentoring_request_modal_content(request):
     if request.method =='POST':
-
         datetime = request.POST.get('datetime')
         return redirect('mentee:mentoring_request')
     else:
@@ -408,3 +415,11 @@ def send_chat(request):
         'status': 'success'
     }
     return JsonResponse(result)
+
+
+
+@login_required
+def mentee_chatlist(request):
+    context = {
+    }
+    return render(request, 'mentee/mentee_chatlist.html', context)

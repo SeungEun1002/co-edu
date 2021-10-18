@@ -39,7 +39,7 @@
             <ul>
                 <li class="{% if request.resolver_match.url_name in 'mentor_list,mentor_detail,mentoring_request' %}colorlib-active{% endif %}"><a href={% url "mentee:mentor_list" %}>멘토 찾기</a></li>
                 <li class="{% if request.resolver_match.url_name == 'mentoring_application'%}colorlib-active{% endif %}"><a href={% url "mentee:mentoring_application" %}>멘토링 신청내역</a></li>
-                <li><a href="#">멘토와의 대화</a></li>
+                <li class="{% if request.resolver_match.url_name == 'mentee_chatlist'%}colorlib-active{% endif %}"><a href={% url "mentee:mentee_chatlist" %}>멘토와의 대화</a></li>
                 <li class="{% if request.resolver_match.url_name == 'mentee_timetable' %}colorlib-active{% endif %}"><a href={% url "mentee:mentee_timetable" %}>내 일정</a></li>
                 <li class="{% if request.resolver_match.url_name == 'mentee_info' %}colorlib-active{% endif %}"><a href={% url "mentee:mentee_info" %}>내 정보</a></li>
             </ul>

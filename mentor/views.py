@@ -4,11 +4,12 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from .models import *
 from coedu.common import *
-from datetime import date, datetime, timedelta
 from user.forms import *
 from django.db.models import Q
 from django.core.paginator import Paginator
 # Create your views here.
+
+from datetime import date, datetime, timedelta
 
 def mentor_check(user):
     return user.is_mentor
@@ -17,7 +18,7 @@ def mentor_check(user):
 @login_required
 @user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
 def index(request):
-    return render(request, 'mentor/layout.html')
+    return render(request, 'mentor/home.html')
 
 @login_required
 @user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
@@ -101,7 +102,7 @@ def mentor_timetable(request):
     # 입력 파라미터
     paging_start = request.GET.get('start')  # 페이지
     if paging_start:
-        paging_start = datetime.datetime.strptime(paging_start, '%Y-%m-%d')
+        paging_start = datetime.strptime(paging_start, '%Y-%m-%d')
     else:
         paging_start = cur_start    # 이번주
 
@@ -264,4 +265,17 @@ def cpt_cell_modal_content_after_memo(request):
         return redirect('mentor:mentor_timetable')
     else:
         raise Http404('This view cannot get GET Request')
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def mentor_chatlist(request):
+    data = {
+        'is_mentoring',
+        'mentee',
+        'chat'
+    }
+    context = {
+    }
+    return render(request, 'mentor/mentor_chatlist.html', context)
 

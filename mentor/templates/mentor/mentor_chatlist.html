@@ -1,0 +1,158 @@
+{% extends 'mentor/layout.html' %}
+
+
+{% block content %}
+
+    <div class="container my-4 px-5">
+        <div>
+            <div class="row justify-content-between my-3">
+                <div class="col-3">
+                    <select class="form-control status">
+                        <option value="all" {% if status == 'all' %}selected{% endif %}>전체</option>
+                        <option value="ong" {% if status == 'ong' %}selected{% endif %}>멘토링 중인 멘티</option>
+                        <option value="cpt" {% if status == 'cpt' %}selected{% endif %}>멘토링 중이 아닌 멘티</option>
+                    </select>
+                </div>
+
+                <div class="col-4 input-group">
+                    <input type="text" class="form-control kw" value="{{ kw|default_if_none:'' }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                <tr class="text-center">
+                    <th style="width:30%">멘티 이름</th>
+                    <th style="width:70%">대화 내용</th>
+                    안읽은 것만 bold 였으면 좋겠다
+                </tr>
+                </thead>
+                <tbody>
+                {% for time in mentoring_timetable %}
+                <tr class="text-center">
+                    <td>
+                        {{ time.mentee.name }}
+                    </td>
+                    <td>
+                        {{ time.mentoring_subject }}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 페이징처리 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if mentoring_timetable.has_previous %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ mentoring_timetable.previous_page_number }}" href="#">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        <!-- 페이지리스트 -->
+        {% for page_number in mentoring_timetable.paginator.page_range %}
+        {% if page_number >= mentoring_timetable.number|add:-5 and page_number <= mentoring_timetable.number|add:5 %}
+            {% if page_number == mentoring_timetable.number %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" data-page="{{ page_number }}" href="#">{{ page_number }}</a>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ page_number }}" href="#">{{ page_number }}</a>
+            </li>
+            {% endif %}
+        {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if mentoring_timetable.has_next %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ mentoring_timetable.next_page_number }}" href="#">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징처리 끝 -->
+
+    <form id="searchForm" method="get" action="">
+        <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+        <input type="hidden" id="page" name="page" value="{{ page }}">
+        <input type="hidden" id="status" name="status" value="{{ status }}">
+    </form>
+
+
+
+    <div id="chat-modal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ mentor.user.name }} 멘토님과 쪽지</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-3" >
+                    <div style="height: 50vh; overflow: hidden; width:100%; " >
+                        <div id="chat-body" style="width: 100%; height: 100%; overflow-y: scroll; padding-right: 17px; box-sizing: content-box;">
+                            {% for chat in chat_list %}
+                                <div class="my-2" style="{% if chat.sender == request.user %}text-align: right;{% else %}text-align: left;{% endif %}">
+                                    {% comment %}
+                                    {% if chat.sender == request.user %}
+                                        <div style="display: inline-block; vertical-align: bottom; font-size: 10px;">
+                                            {{ chat.created_datetime|date:"m월 d일 H시 i분" }}
+                                        </div>
+                                    {% endif %}
+                                   {% endcomment %}
+                                    <div class="card py-2 px-2 m-0" style="display: inline-block; max-width: 45%;">
+                                        {{ chat.content }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex mt-3">
+                        <textarea id="chat-content" rows="1" name="content" class="form-control mr-2"></textarea>
+                        <input type="button" class="btn btn-outline-secondary" value="보내기" onclick="chatSending(this);"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+    <script type='text/javascript'>
+    $(document).ready(function(){
+        $(".page-link").on('click', function() {
+            $("#page").val($(this).data("page"));
+            $("#searchForm").submit();
+        });
+
+        $("#btn_search").on('click', function() {
+            $("#kw").val($(".kw").val());
+            $("#page").val(1);  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+            $("#searchForm").submit();
+        });
+
+        $(".status").on('change', function() {
+            $("#status").val($(this).val());
+            $("#page").val(1);
+            $("#searchForm").submit();
+        });
+    });
+</script>
+{% endblock %}

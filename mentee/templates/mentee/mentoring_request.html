@@ -40,7 +40,7 @@
                                 <td class="align-middle">{{ row.time_str }}</td>
                                 {% for col in row.columns %}
                                     {% if col.type == 'ini' %}
-                                        <td class="full-green-td" datetime="{{ col.obj.start_datetime|date:'Y-m-d H:i:s' }}" onclick="mentoringRequestModalClicked(this)" pk="{{ col.obj.id }}" time="{{ col.obj.start_datetime|date:'m월 d일 H시' }}">
+                                        <td class="full-green-td" onclick="mentoringRequestModalClicked(this)" pk="{{ col.obj.id }}" time="{{ col.obj.start_datetime|date:'m월 d일 H시' }}" mentor_id="{{ col.obj.mentor.user.id }}" datetime="{{ col.obj.start_datetime }}">
                                         </td>
 
                                     {% elif col.type == 'ong' %}
@@ -83,7 +83,7 @@
       <div class="px-4 pb-3">
           시간: <span class="start-datetime"></span>부터 1시간 </br>
           원하는 멘토링 내용:
-          <form action="{% url 'mentee:mentoring_request_modal' %}" method="post" onsubmit="return confirm('멘토링 신청 내용은 수정이 불가능합니다. 신청하시겠습니까?')">
+          <form action="{% url 'mentee:mentoring_request_modal' %}?mentor_id={{ mentor.user.id }}" method="post" onsubmit="return confirm('멘토링 신청 내용은 수정이 불가능합니다. 신청하시겠습니까?')">
               {% csrf_token %}
               <input type="hidden" name="datetime" />
               <input type="hidden" name='pk' />

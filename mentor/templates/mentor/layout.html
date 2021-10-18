@@ -38,7 +38,7 @@
             <h1 class="site-title underline-green"><a href={% url "mentor:index" %}>Co-edu</a></h1>
             <ul>
                 <li class="{% if request.resolver_match.url_name == 'mentoring_list' %}colorlib-active{% endif %}"><a href={% url "mentor:mentoring_list" %}>멘토링 내역</a></li>
-                <li><a href="#">멘티와의 대화</a></li>
+                <li class="{% if request.resolver_match.url_name == 'mentor_chatlist' %}colorlib-active{% endif %}"><a href={% url "mentor:mentor_chatlist" %}>멘티와의 대화</a></li>
                 <li class="{% if request.resolver_match.url_name == 'mentor_timetable' %}colorlib-active{% endif %}"><a href={% url "mentor:mentor_timetable" %}>내 일정</a></li>
                 <li class="{% if request.resolver_match.url_name == 'mentor_info' %}colorlib-active{% endif %}"><a href={% url "mentor:mentor_info" %}>내 정보</a></li>
             </ul>
