@@ -32,7 +32,7 @@
             {% for mentor_chat in mentor_chat_list %}
             <tr class="text-center">
                 <td>
-                    <a href="{% url 'mentee:mentor_detail' %}?mentor_id={{ mentor_chat.mentor.user.id }}">{{ mentor_chat.mentor.user.name }}</a>
+                    <a style="cursor: pointer; color: #000000" href="{% url 'mentee:mentor_detail' %}?mentor_id={{ mentor_chat.mentor.user.id }}">{{ mentor_chat.mentor.user.name }}</a>
                 </td>
                 <td>
                     <span style="cursor: pointer;" onclick="showChatModal(this);" mentor_id="{{ mentor_chat.mentor.user.id }}">{{ mentor_chat.last_chat.content }}</span>

@@ -32,7 +32,7 @@
                 {% for mentee_chat in mentee_chat_list %}
                 <tr class="text-center">
                     <td>
-                        {{ mentee_chat.mentee.name }}
+                        <span style="cursor: pointer;" onclick="menteeInfoModal(this);" mentee_id="{{ mentee_chat.mentee.id }}">{{ mentee_chat.mentee.name }}</span>
                     </td>
                     <td>
                         <span style="cursor: pointer;" onclick="showChatModal(this);" mentee_id="{{ mentee_chat.mentee.id }}">{{ mentee_chat.last_chat.content }}</span>
@@ -91,6 +91,32 @@
 
 
 
+    <div id="mentee-info-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">멘티 정보</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+              <form action="{% url 'mentor:cpt_cell_modal' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="datetime" />
+                  <input type="button" class="btn btn-secondary" data-dismiss="modal" value="확인" />
+              </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
     <div id="chat-modal" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -143,6 +169,21 @@
 </script>
 
     <script>
+
+    function menteeInfoModal(obj) {
+        const menteeId = obj.getAttribute('mentee_id');
+        const modal = document.getElementById('mentee-info-modal');
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+
+            document.querySelector("#mentee-info-modal .modal-body").innerHTML = this.responseText;
+
+            $('#mentee-info-modal').modal('toggle');
+        }
+        xhttp.open("GET", `{% url 'mentor:get_mentee_info' %}?mentee_id=${menteeId}`, true);
+        xhttp.send();
+    }
 
     function showChatModal(obj) {
         const menteeId = obj.getAttribute('mentee_id');

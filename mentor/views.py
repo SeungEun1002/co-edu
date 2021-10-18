@@ -22,6 +22,7 @@ def mentor_check(user):
 def index(request):
     return render(request, 'mentor/home.html')
 
+
 @login_required
 @user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
 def mentor_info(request):
@@ -32,7 +33,7 @@ def mentor_info(request):
             return redirect('mentor:mentor_info')
 
     form = MentorChangeForm(instance = request.user.mentor)
-    return render(request, 'mentor/mentor_info.html', {'form': form})
+    return render(request, 'mentor/mentor_info.html', {'form': form, 'user': request.user })
 
 
 @login_required
@@ -318,6 +319,7 @@ def mentor_chatlist(request):
 
 
 @login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
 def get_chat_body(request):
     mentee_id = request.GET.get('mentee_id')
 
@@ -334,4 +336,17 @@ def get_chat_body(request):
     }
 
     return render(request, 'mentee/chat_body.html' , context)
+
+
+@login_required
+@user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
+def get_mentee_info(request):
+    mentee_id = request.GET.get('mentee_id')
+    mentee = User.objects.get(id=mentee_id)
+
+    context = {
+        'mentee': mentee,
+    }
+
+    return render(request, 'mentor/mentee_info.html' , context)
 
