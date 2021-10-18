@@ -17,5 +17,6 @@ urlpatterns = [
     path('cpt_cell_modal/content/after_memo/', cpt_cell_modal_content_after_memo, name="cpt_cell_modal_content_after_memo"),
     path('cpt_cell_modal/content/', cpt_cell_modal_content, name="cpt_cell_modal_content"),
     path('cpt_cell_modal/', cpt_cell_modal, name="cpt_cell_modal"),
+    path('chat/body/', get_chat_body, name="get_chat_body"),
 ]
 

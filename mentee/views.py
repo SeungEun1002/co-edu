@@ -116,6 +116,7 @@ def mentor_detail(request):
     context = {
         'mentor': mentor,
         'chat_list': chat_list,
+        'chat_list_last': chat_list.last(),
     }
 
     return render(request, 'mentee/mentor_detail.html', context)
@@ -424,6 +425,66 @@ def send_chat(request):
 
 @login_required
 def mentee_chatlist(request):
+    # 입력 파라미터
+    page = request.GET.get('page', '1')  # 페이지
+    kw = request.GET.get('kw', '')  # 검색어
+    status = request.GET.get('status', 'all')  # 필터링
+
+    mentor_chat_list = list()
+
+    mentor_list = Mentor.objects.filter(Q(user__chat_send__receiver=request.user) | Q(user__chat_receive__sender=request.user)).distinct()
+
+    # 필터링
+    if status == 'act':
+        mentor_list = mentor_list.filter(mentoringtimetable__mentee=request.user)
+    elif status == 'cle':
+        mentor_list = mentor_list.exclude(mentoringtimetable__mentee=request.user)
+
+    # 검색어
+    if kw:
+        mentor_list = mentor_list.filter(user__name__icontains=kw)
+
+
+    # 페이징처리
+    paginator = Paginator(mentor_list, 10)  # 페이지당 10개씩 보여주기
+    mentor_list = paginator.get_page(page)
+
+    for mentor in mentor_list:
+        last_chat = Chat.objects.filter(Q(sender=request.user) | Q(receiver=request.user)) \
+                                .filter(Q(sender=mentor.user) | Q(receiver=mentor.user)) \
+                                .distinct() \
+                                .order_by('created_datetime')\
+                                .last()
+        if last_chat:
+            mentor_chat_list.append({
+                'mentor': mentor,
+                'last_chat': last_chat
+            })
+
     context = {
+        'mentor_chat_list': mentor_chat_list,
+        'page': page,
+        'kw': kw,
+        'status': status,
     }
+
     return render(request, 'mentee/mentee_chatlist.html', context)
+
+
+@login_required
+def get_chat_body(request):
+    mentor_id = request.GET.get('mentor_id')
+
+    mentor = Mentor.objects.get(user__id=mentor_id)
+    chat_list = Chat.objects.filter(Q(sender=request.user) | Q(receiver=request.user)) \
+        .filter(Q(sender=mentor.user) | Q(receiver=mentor.user)) \
+        .distinct() \
+        .order_by('created_datetime')
+
+    context = {
+        'mentor': mentor,
+        'chat_list': chat_list,
+        'chat_list_last': chat_list.last(),
+    }
+
+    return render(request, 'mentee/chat_body.html' , context)

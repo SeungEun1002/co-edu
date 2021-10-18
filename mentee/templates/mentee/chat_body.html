@@ -1,0 +1,13 @@
+{% for chat in chat_list %}
+    <div class="my-2" style="{% if chat.sender == request.user %}text-align: right;{% else %}text-align: left;{% endif %}">
+        <div class="card py-2 px-2 m-0" style="display: inline-block; max-width: 45%;">
+            {{ chat.content }}
+        </div>
+    </div>
+{% endfor %}
+
+{% if chat_list_last %}
+    <div style="text-align: center">
+        -------- {{ chat_list_last.created_datetime|date:'m월 d일 H시 i분' }}에 마지막 대화를 했습니다 --------
+    </div>
+{% endif %}

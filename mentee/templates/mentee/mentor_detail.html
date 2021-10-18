@@ -63,6 +63,12 @@
                                     </div>
                                 </div>
                             {% endfor %}
+
+                        {% if chat_list_last %}
+                            <div style="text-align: center">
+                                -------- {{ chat_list_last.created_datetime|date:'m월 d일 H시 i분' }}에 마지막 대화를 했습니다 --------
+                            </div>
+                        {% endif %}
                         </div>
                     </div>
 
@@ -86,7 +92,7 @@
         let chatBody = document.getElementById('chat-body');
         chatBody.scrollTo(0, chatBody.scrollHeight);
 
-    }
+        }
 
     function chatSending(sendButton){
         // Get content dom element

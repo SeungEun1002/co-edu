@@ -25,18 +25,17 @@
                 <thead>
                 <tr class="text-center">
                     <th style="width:30%">멘티 이름</th>
-                    <th style="width:70%">대화 내용</th>
-                    안읽은 것만 bold 였으면 좋겠다
+                    <th style="width:70%">마지막 대화 내용</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for time in mentoring_timetable %}
+                {% for mentee_chat in mentee_chat_list %}
                 <tr class="text-center">
                     <td>
-                        {{ time.mentee.name }}
+                        {{ mentee_chat.mentee.name }}
                     </td>
                     <td>
-                        {{ time.mentoring_subject }}
+                        <span style="cursor: pointer;" onclick="showChatModal(this);" mentee_id="{{ mentee_chat.mentee.id }}">{{ mentee_chat.last_chat.content }}</span>
                     </td>
                 </tr>
                 {% endfor %}
@@ -96,7 +95,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ mentor.user.name }} 멘토님과 쪽지</h5>
+                    <h5 class="modal-title">멘티님과 쪽지</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -104,20 +103,7 @@
                 <div class="modal-body px-3" >
                     <div style="height: 50vh; overflow: hidden; width:100%; " >
                         <div id="chat-body" style="width: 100%; height: 100%; overflow-y: scroll; padding-right: 17px; box-sizing: content-box;">
-                            {% for chat in chat_list %}
-                                <div class="my-2" style="{% if chat.sender == request.user %}text-align: right;{% else %}text-align: left;{% endif %}">
-                                    {% comment %}
-                                    {% if chat.sender == request.user %}
-                                        <div style="display: inline-block; vertical-align: bottom; font-size: 10px;">
-                                            {{ chat.created_datetime|date:"m월 d일 H시 i분" }}
-                                        </div>
-                                    {% endif %}
-                                   {% endcomment %}
-                                    <div class="card py-2 px-2 m-0" style="display: inline-block; max-width: 45%;">
-                                        {{ chat.content }}
-                                    </div>
-                                </div>
-                            {% endfor %}
+                            <!-- By Javascript -->
                         </div>
                     </div>
 
@@ -155,4 +141,59 @@
         });
     });
 </script>
+
+    <script>
+
+    function showChatModal(obj) {
+        const menteeId = obj.getAttribute('mentee_id');
+
+        let chatBody = document.getElementById('chat-body');
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+            chatBody.innerHTML = this.responseText
+
+            $('#chat-modal').modal('toggle');
+
+            chatBody.scrollTo(0, chatBody.scrollHeight);
+
+            chatBody.setAttribute('mentee_id', menteeId);
+        }
+        xhttp.open("GET", `{% url 'mentor:get_chat_body' %}?mentee_id=${menteeId}`, true);
+        xhttp.send();
+    }
+
+    function chatSending(sendButton){
+        // Get content dom element
+        let chatInput = document.getElementById('chat-content')
+        let chatBody = document.getElementById('chat-body')
+        const menteeId = chatBody.getAttribute('mentee_id')
+
+        // Make form data
+        var formData = new FormData();
+        formData.append("content", chatInput.value);
+        formData.append("sender_id", "{{ request.user.id }}");
+        formData.append("receiver_id", menteeId);
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+            // Update chatBody
+            chatBody.innerHTML += `
+                <div class="my-2" style="text-align: right;">
+                    <div class="card py-2 px-2 m-0" style="display: inline-block; max-width: 45%;">
+                        ${chatInput.value}
+                    </div>
+                </div>
+            `
+
+            chatBody.scrollTo(0, chatBody.scrollHeight);
+
+            // Initialize chat input
+            chatInput.value = '';
+        }
+        xhttp.open("POST", "{% url 'mentee:send_chat' %}", true);
+        xhttp.send(formData);
+    }
+
+    </script>
 {% endblock %}
