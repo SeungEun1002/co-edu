@@ -7,6 +7,8 @@ from coedu.common import *
 from user.forms import *
 from django.db.models import Q
 from django.core.paginator import Paginator
+
+from mentee.models import Chat
 # Create your views here.
 
 from datetime import date, datetime, timedelta
@@ -270,12 +272,66 @@ def cpt_cell_modal_content_after_memo(request):
 @login_required
 @user_passes_test(mentor_check, login_url='/mentee/mentor/signup/')
 def mentor_chatlist(request):
-    data = {
-        'is_mentoring',
-        'mentee',
-        'chat'
-    }
+    # 입력 파라미터
+    page = request.GET.get('page', '1')  # 페이지
+    kw = request.GET.get('kw', '')  # 검색어
+    status = request.GET.get('status', 'all')  # 필터링
+
+    mentee_chat_list = list()
+
+    mentee_list = User.objects.filter(Q(chat_send__receiver=request.user) | Q(chat_receive__sender=request.user)).distinct()
+
+    # 필터링
+    if status == 'ong':
+        mentee_list = mentee_list.filter(mentoringtimetable__mentor__user=request.user)
+    elif status == 'cpt':
+        mentee_list = mentee_list.exclude(mentoringtimetable__mentor__user=request.user)
+
+    # 검색어
+    if kw:
+        mentee_list = mentee_list.filter(name__icontains=kw)
+
+    # 페이징처리
+    paginator = Paginator(mentee_list, 10)  # 페이지당 10개씩 보여주기
+    mentee_list = paginator.get_page(page)
+
+    for mentee in mentee_list:
+        last_chat = Chat.objects.filter(Q(sender=request.user) | Q(receiver=request.user)) \
+            .filter(Q(sender=mentee) | Q(receiver=mentee)) \
+            .distinct() \
+            .order_by('created_datetime') \
+            .last()
+        if last_chat:
+            mentee_chat_list.append({
+                'mentee': mentee,
+                'last_chat': last_chat
+            })
+
+
     context = {
+        'mentee_chat_list': mentee_chat_list,
+        'page': page,
+        'kw': kw,
+        'status': status,
     }
     return render(request, 'mentor/mentor_chatlist.html', context)
+
+
+@login_required
+def get_chat_body(request):
+    mentee_id = request.GET.get('mentee_id')
+
+    mentee = User.objects.get(id=mentee_id)
+    chat_list = Chat.objects.filter(Q(sender=request.user) | Q(receiver=request.user)) \
+        .filter(Q(sender=mentee) | Q(receiver=mentee)) \
+        .distinct() \
+        .order_by('created_datetime')
+
+    context = {
+        'mentee': mentee,
+        'chat_list': chat_list,
+        'chat_list_last': chat_list.last(),
+    }
+
+    return render(request, 'mentee/chat_body.html' , context)
 
