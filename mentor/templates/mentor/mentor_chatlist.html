@@ -1,4 +1,9 @@
 {% extends 'mentor/layout.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/timetable.css'%}">
+{% endblock %}
 
 
 {% block content %}
@@ -31,10 +36,10 @@
                 <tbody>
                 {% for mentee_chat in mentee_chat_list %}
                 <tr class="text-center">
-                    <td>
+                    <td class="full-underline-td">
                         <span style="cursor: pointer;" onclick="menteeInfoModal(this);" mentee_id="{{ mentee_chat.mentee.id }}">{{ mentee_chat.mentee.name }}</span>
                     </td>
-                    <td>
+                    <td class="full-underline-td">
                         <span style="cursor: pointer;" onclick="showChatModal(this);" mentee_id="{{ mentee_chat.mentee.id }}">{{ mentee_chat.last_chat.content }}</span>
                     </td>
                 </tr>

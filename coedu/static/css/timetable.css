@@ -112,52 +112,56 @@ body{
 }
 
 .empty-stable-td {
-    background-color:#D0F0C0;
+    background-color:#FFFFFF;
     opacity: 0;
 }
 
 .empty-td {
     cursor: pointer;
-    background-color:#008800;
-    opacity: 0;
 }
 
 .empty-td:hover {
-    opacity: 0.1;
+    background-color: rgba(0,136,0,0.1);
 }
 
 .full-green-stable-td {
-    background-color: #008800;
-    opacity: 0.2;
+    background-color: rgba(0,136,0,0.2);
 }
 
 .full-green-td {
     cursor: pointer;
-    background-color: #008800;
-    opacity: 0.2;
+    background-color: rgba(0,136,0,0.2);
 }
 
 .full-green-td:hover {
-    opacity: 0.3;
+    background-color: rgba(0,136,0,0.3);
 }
 
 .full-red-td {
     cursor: pointer;
-    background-color:#FF6768;
-    opacity: 0.4;
+    background-color: rgba(255,103,104,0.4);
 }
 
 .full-red-td:hover {
-    opacity: 0.5;
+    background-color: rgba(255,103,104,0.5);
 }
 
 .full-light-red-td {
     cursor: pointer;
-    background-color:#FF6768;
-    opacity: 0.1;
+    background-color: rgba(255,103,104,0.1);
 }
 
 .full-light-red-td:hover {
-    opacity: 0.2;
+    background-color: rgba(255,103,104,0.2);
 }
 
+.full-gray-stable-td {
+    background-color: rgba(0,0,0,0.2);
+}
+
+.full-underline-td {
+}
+
+.full-underline-td:hover {
+    text-decoration: underline;
+}

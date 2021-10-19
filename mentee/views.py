@@ -254,7 +254,6 @@ def mentee_timetable(request):
         row = {
             'time_str': time['str']
         }
-
         weekday_num_list = [2, 3, 4, 5, 6, 7, 1]
         columns = []
         for col_idx, weekday_num in enumerate(weekday_num_list):

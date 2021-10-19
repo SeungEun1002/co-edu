@@ -7,27 +7,27 @@ def get_timetable_time_list():
         data = {}
         if i == 11:
             data = {
-                'str': f'{i}: 00am~{i+1}:00pm',
+                'str': f'{i}:00am~{i+1}:00pm',
                 'hour': i,
             }
         elif i ==12:
             data = {
-                'str': f'{i}: 00pm~{(i+1) % 12}:00pm',
+                'str': f'{i}:00pm~{(i+1) % 12}:00pm',
                 'hour': i,
             }
         elif i == 23:
             data = {
-                'str': f'{i}: 00pm~{(i + 1) % 12}:00am',
+                'str': f'{i}:00pm~{(i + 1) % 12}:00am',
                 'hour': i,
             }
         elif i//12 ==0:
             data = {
-                'str': f'{i}: 00am~{i+1}:00am',
+                'str': f'{i}:00am~{i+1}:00am',
                 'hour': i,
             }
         else:
             data = {
-                'str': f'{i % 12}: 00pm~{(i+1) % 12}:00pm',
+                'str': f'{i % 12}:00pm~{(i+1) % 12}:00pm',
                 'hour': i,
             }
         time_list.append(data)

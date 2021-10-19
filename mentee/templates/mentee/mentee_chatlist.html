@@ -1,4 +1,9 @@
 {% extends 'mentee/layout.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/timetable.css'%}">
+{% endblock %}
 
 
 {% block content %}
@@ -31,10 +36,10 @@
             <tbody>
             {% for mentor_chat in mentor_chat_list %}
             <tr class="text-center">
-                <td>
+                <td class="full-underline-td">
                     <a style="cursor: pointer; color: #000000" href="{% url 'mentee:mentor_detail' %}?mentor_id={{ mentor_chat.mentor.user.id }}">{{ mentor_chat.mentor.user.name }}</a>
                 </td>
-                <td>
+                <td class="full-underline-td">
                     <span style="cursor: pointer;" onclick="showChatModal(this);" mentor_id="{{ mentor_chat.mentor.user.id }}">{{ mentor_chat.last_chat.content }}</span>
                 </td>
             </tr>

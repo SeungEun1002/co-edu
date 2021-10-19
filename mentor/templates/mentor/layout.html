@@ -43,7 +43,7 @@
                 <li class="{% if request.resolver_match.url_name == 'mentor_info' %}colorlib-active{% endif %}"><a href={% url "mentor:mentor_info" %}>내 정보</a></li>
             </ul>
             <a href={% url "mentee:index" %} class="btn btn-primary">멘티로 전환</a>
-            <a href={% url "home" %} class="btn btn-primary">로그아웃</a>
+            <a href={% url "home" %} class="btn btn-outline-primary">로그아웃</a>
 
         </nav>
     </aside> <!-- END COLORLIB-ASIDE -->

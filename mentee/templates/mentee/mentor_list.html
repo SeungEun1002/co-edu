@@ -56,8 +56,10 @@
                             <p class="card-text">
                                 <ul>
                                     <li> {{ inst.major }}, {{ inst.user.admission_year|slice:"2:4"}}학번</li>
+                                    <!--
                                     <li> {{ inst.user.get_gender_display }} </li>
-                                    <li> {{ inst.teaching_subject|linebreaksbr|truncatechars:'40' }} </li>
+                                    -->
+                                    <li> {{ inst.teaching_subject|linebreaksbr|truncatechars:'60' }} </li>
                                 </ul>
                             </p>
                             <!--
