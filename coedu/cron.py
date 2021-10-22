@@ -11,9 +11,9 @@ def hour_schedule():
     now = now.replace(minute=0, second=0, microsecond=0)
 
     # 1. 멘토링 진행중 -> 완료
-    MentoringTimeTable.objects.filter()
-    ongoing_timetable_list = MentoringTimeTable.objects.filter(start_datetime__lt=now, status='ong').all()
-    ongoing_timetable_list.bulk_update(status='cpt')
+    ongoing_timetable_qs = MentoringTimeTable.objects.filter(start_datetime__lt=now, status='ong').all()
+    ongoing_timetable_list = list(ongoing_timetable_qs)
+    ongoing_timetable_qs.update(status='cpt')
 
     # 2. 멘토에게 봉사시간 1시간 추가
     for ongoing_timetable in ongoing_timetable_list:
@@ -26,4 +26,4 @@ def hour_schedule():
 
     # 4. 이전 MentoringRequest ong reject로
     ongoing_request_list = MentoringRequest.objects.filter(mentoring_timetable__start_datetime__lt=now, status='ong').all()
-    ongoing_request_list.bulk_update(status='rej')
+    ongoing_request_list.update(status='rej')

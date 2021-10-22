@@ -29,6 +29,7 @@ SECRET_KEY = 'django-insecure-jx9kor2g5=_+-ofejs7+u=dho0!b+ec@wl9j3qsdi%-dtklr*3
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,6 @@ INSTALLED_APPS = [
     'mentor',
     'mentee',
     'django_extensions',
-    'django_crontab',
 ]
 
 MIDDLEWARE = [
