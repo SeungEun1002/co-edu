@@ -8,5 +8,5 @@ ALLOWED_HOSTS = ['3.36.220.93', 'co-edu.co.kr']
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CRONJOBS = [
-    ('* * * * *', 'coedu.cron.print_log', f'>> {os.path.join(BASE_DIR, "coedu", "cron.log")}')
+    ('* * * * *', 'coedu.cron.hour_schedule', f'>> {os.path.join(BASE_DIR, "coedu", "cron.log")}')
 ]

@@ -5,8 +5,6 @@ from coedu.common import *
 
 from datetime import timedelta
 
-def print_log():
-    print('log')
 
 def hour_schedule():
     _, _, now = get_cur_week_datetime()
