@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'mentor',
     'mentee',
     'django_extensions',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
