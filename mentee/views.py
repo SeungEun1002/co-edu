@@ -63,7 +63,7 @@ def mentor_list(request):
     subject_search = request.POST.getlist('subject-search', [])  # 과목 검색
     univ_search = request.POST.getlist('univ-search', [])  # 대학 검색
 
-    qs = Mentor.objects.all()
+    qs = Mentor.objects.exclude(user=request.user)
 
     # qs 필터링
     ## 검색어
