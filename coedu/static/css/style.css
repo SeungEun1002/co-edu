@@ -62,3 +62,21 @@ body {
     width: 20px;
     height: 20px;
 }
+
+#id_subject {
+    padding: 0;
+    padding-left: 5px;
+    list-style: none;
+    margin-bottom: 0px;
+    margin-top: -16px;
+}
+
+#id_subject li {
+    display: inline-block;
+    padding-right: 8px;
+}
+
+#id_subject li label {
+    display: flex;
+    align-items: center;
+}
