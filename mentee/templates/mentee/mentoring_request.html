@@ -33,7 +33,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <div style="font-size: 20px;"><a href="?start={{ start|plus_days:-7|date:'Y-m-d' }}"><i class="bi bi-caret-left-fill" style="cursor: pointer; " ></i></a> {{ start.date }}~ {{ end.date }} <a href="?start={{ start|plus_days:7|date:'Y-m-d' }}"><i class="bi bi-caret-right-fill" style="cursor: pointer;"></i></a></div>
+                        <div style="font-size: 20px;"><a href="?start={{ start|plus_days:-7|date:'Y-m-d' }}& mentor_id={{mentor.user.id}}"><i class="bi bi-caret-left-fill" style="cursor: pointer; " ></i></a> {{ start.date }}~ {{ end.date }} <a href="?start={{ start|plus_days:7|date:'Y-m-d' }}&mentor_id={{mentor.user.id}}"><i class="bi bi-caret-right-fill" style="cursor: pointer;"></i></a></div>
 
                             {% for row in data %}
                             <tr style="height: 30px">
